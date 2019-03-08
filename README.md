@@ -16,4 +16,7 @@
 
 ### Job Division among Members:
 
-(pending)
+- Member 1: Coding, Cluster Setup, Team Coordination
+- Member 2: Cluster Setup, Cluster Maintenance
+- Member 3: Data Collection
+- Member 4: (pending)
