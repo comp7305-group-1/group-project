@@ -1,0 +1,11 @@
+network:
+  version: 2
+    renderer: networkd
+    ethernets:
+      xxx:
+        dhcp4: no
+    bridges:
+      xenbr0:
+        macaddress: xx:xx:xx:xx:xx:xx
+          interfaces: [xxx]
+          dhcp4: yes
