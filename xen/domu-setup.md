@@ -4,10 +4,16 @@
 
 ## Create the Image of the VM
 ```sh
-sudo xen-create-image --hostname vm1
+sudo xen-create-image --hostname=vm1
 ```
 - Note: Let `vm1` be the name of the VM
 - Note: Save the command output
+
+## (Optional) Monitor the Creation of the Image
+```sh
+sudo tail -f /var/log/xen-tools/vm1.log
+```
+- Note: Execute this on another terminal
 
 ## Configure the Parameters of the VM
 ```sh
@@ -51,7 +57,7 @@ netplan apply
 ## Configure DNS
 ```sh
 rm /etc/resolv.conf
-vim /etc/resolv.conf
+vi /etc/resolv.conf
 ```
 `resolv.conf`:
 ```
@@ -83,7 +89,7 @@ reboot
 
 # On Dom0
 
-## Setup Public Key Login
+## Copy the SSH Public Key to the VM
 ```sh
 ssh-copy-id -i ~/.ssh/id_ecdsa.pub admin@vm1
 ```
