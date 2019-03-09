@@ -13,6 +13,8 @@
 ### Project Ideas:
 
 1. [Cryptographic Hash Solver on Spark](rainbow-table.md)
+1. [Unravel the Mysteries by Spark](solving-mysteries.md)
+
 
 ### Job Division among Members:
 
