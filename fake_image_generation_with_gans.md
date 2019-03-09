@@ -19,10 +19,12 @@ Over the course of many training iterations, the weights and biases in the discr
 ## Expected fake image generated:
 
 Human face
+
 ![alt text](https://cdn-images-1.medium.com/max/1200/1*-WZvqhgqi1jnpp7wlqjniA.png "")    ![alt text](https://cdn-images-1.medium.com/max/1200/1*7ped99JzASx55f5dIvdkvg.png "")   ![alt text](https://cdn-images-1.medium.com/max/1200/1*FNVgUtYrNZTa8mBtzj7oMw.png "") ![alt text](https://cdn-images-1.medium.com/max/1200/1*xZEOBh8nLHVTDns6ApiASw.png
  "")
  
 Human handwriting
+
 ![alt text](https://d3ansictanv2wj.cloudfront.net/gan-images-final-d7bdb862726f6fd928a7c859a69c3248.gif "")
 
 Reference: 
@@ -52,19 +54,3 @@ https://www.oreilly.com/learning/generative-adversarial-networks-for-beginners
  (http://vision.stanford.edu/aditya86/ImageNetDogs/)
 - The MNIST Datasbase of handwritten digits 
   (http://yann.lecun.com/exdb/mnist/) 
-
-
-
-
-
-
-
-
-
- 
-
-
-
-
-
-
