@@ -30,6 +30,12 @@ sudo xl create /etc/xen/slaveX.cfg
 ```
 extra = 'ipv6.disable=1'
 ```
+- Note: `slaveX` is a placeholder for the hostname of a slave.
+- Note: Repeat this step for each slave.
+
+# Login as admin@master, and admin@slaveX
+
+Note: The following steps have to be done once on master, and once on each slave.
 
 ## Check CPU, RAM, Swap
 ```sh
@@ -40,11 +46,11 @@ free -h
 ```sh
 127.0.0.1 localhost
 4.3.2.1 master
-4.3.2.2 slave1
-4.3.2.3 slave2
+4.3.2.2 slaveX
 ```
 - Note: The IPs are just example IPs.
-- Note: `slave1` and `slave2` refer to the hostnames of the slave nodes.
+- Note: `slaveX` is a placeholder for the hostname of a slave.
+- Note: Add an entry for each slave.
 
 ## Update Packages
 ```sh
@@ -66,15 +72,14 @@ sudo apt-get update
 sudo apt-get -y install oracle-java8-installer
 ```
 
-## Create the Hadoop Service Account
+## Setup the Hadoop Service Account
 ```sh
 sudo addgroup hadoop
 sudo adduser --ingroup hadoop hduser
 ```
 
-## Create the Directories for Hadoop
+## Setup Directories for Hadoop
 ```sh
-sudo mkdir -p /opt
 sudo chmod 777 /opt
 sudo mkdir /var/hadoop
 sudo chown hduser:hadoop /var/hadoop
