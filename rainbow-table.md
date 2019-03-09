@@ -6,12 +6,15 @@ Cryptographic hash solver using rainbow table. The user inputs the cryptographic
 
 ### Pros
 
-- The problem is suitable for being computed in a distributed environment for speed up.
-- The dataset size could be adjusted freely, since the rainbow table itself is generated, and several parameters control its size.
+- The problem well suited to be computed in a distributed environment for speed up.
+- The dataset size could be adjusted at will, because the rainbow table itself is generated. Several parameters control its size:
+  - The target domain to be solved (e.g. numberic strings, alphanumeric string, etc.)
+  - The length of a chain
+  - The number of chains
 
 ### Cons
 
-- Difficult to distribute tasks to 4 groupmates.
+- It is difficult to distribute work amoung 4 groupmates.
 - The performance may not be fascinating on a 4-machine cluster.
 
 ### Software to be Installed
