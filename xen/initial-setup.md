@@ -49,7 +49,7 @@ sudo netplan generate
 sudo netplan apply
 ```
 
-## Reboot the machine
+## Reboot the Machine
 ```sh
 sudo reboot
 ```
@@ -78,4 +78,9 @@ sudo chmod 777 /home/xen
 ```sh
 cd /usr/lib
 sudo ln -s xen-4.9 xen
+```
+
+## Generate SSH Key Pair
+```sh
+ssh-keygen -t ecdsda -b 521 -f ~/.ssh/id_ecdsa -N ''
 ```
