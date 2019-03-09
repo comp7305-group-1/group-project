@@ -32,7 +32,7 @@ passwd
 ```sh
 vi /etc/netplan/01-netcfg.yaml
 ```
-`01-netcfg.yaml` [[download](01-netcfg-domu.yaml)]:
+`01-netcfg.yaml` [[download](01-netcfg.yaml)]:
 ```yaml
 network:
   version: 2
