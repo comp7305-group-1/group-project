@@ -26,7 +26,7 @@ sudo apt-get install bridge-utils
 ```sh
 sudo vim /etc/netplan/01-netcfg.yaml
 ```
-`01-netcfg.yaml`:
+`01-netcfg.yaml` [[download](01-netcfg-dom0-template.yaml)]:
 ```yaml
 network:
   version: 2
