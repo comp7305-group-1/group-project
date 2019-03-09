@@ -48,7 +48,7 @@ network:
         dhcp4: yes
 ```
 
-## Apply the Netplan for Dom0
+## Apply the Netplan for DomU
 ```sh
 netplan generate
 netplan apply
