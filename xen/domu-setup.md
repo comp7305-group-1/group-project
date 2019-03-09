@@ -11,7 +11,7 @@ sudo xen-create-image --hostname vm1
 
 ## Configure the Parameters of the VM
 ```sh
-sudo vim /etc/xen/vm1/cfg
+sudo vim /etc/xen/vm1.cfg
 ```
 - Note: Change the MAC address
 
@@ -19,7 +19,7 @@ sudo vim /etc/xen/vm1/cfg
 ```sh
 sudo xl create /etc/xen/vm1.cfg -c
 ```
-- User `root` for username, and the password saved from the previous step
+- Note: Use `root` for username, and the password saved from the previous step
 
 # On DomU
 
