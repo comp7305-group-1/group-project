@@ -4,5 +4,5 @@
    - Once on Dom0
 1. [Initial Config (on Dom0)](initial-config.md)
    - Once on Dom0
-1. [Setup (on DomU)](domu-setup.md)
+1. [Setup a New VM](domu-setup.md)
    - Every time a new DomU is created
