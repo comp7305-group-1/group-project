@@ -66,6 +66,7 @@ vi /etc/resolv.conf
 ```
 nameserver 192.168.1.1
 ```
+- Note: `192.168.1.1` is just a placeholder for the IP of the DNS.
 - Note: The `rm` step is essential, since the original file is a symlink, and it is generated and managed by Netplan.
 
 ## Add Admin Account
