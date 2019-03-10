@@ -9,7 +9,11 @@ Note: The following steps have to be done once on master, and once on each slave
 free -h
 ```
 
-## Check and Update /etc/hosts
+## Check and Update Local DNS Table
+```sh
+sudo vim /etc/hosts
+```
+`/etc/hosts`:
 ```sh
 127.0.0.1 localhost
 4.3.2.1 master
