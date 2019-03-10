@@ -65,10 +65,15 @@ nameserver 192.168.1.1
 ```
 - Note: The `rm` step is essential, since the original file is a symlink, and it is generated and managed by Netplan.
 
-## Add Admin User
+## Add Admin Account
 ```sh
 adduser admin
 usermod -a -G sudo admin
+```
+
+## Protect Home Directory
+```sh
+chmod 700 /home/admin
 ```
 
 ## Update Packages
