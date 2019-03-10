@@ -7,11 +7,6 @@ To switch user from admin to hduser:
 sudo -u hduser -i
 ```
 
-## Protect Home Directory
-```sh
-chmod 700 ~
-```
-
 ## Download and Install Hadoop 2.7
 ```sh
 cd /opt
