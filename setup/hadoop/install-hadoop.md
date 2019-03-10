@@ -7,7 +7,7 @@ To switch user from admin to hduser:
 sudo -u hduser -i
 ```
 
-## Download and Install Hadoop 2.7
+## Download and Install Hadoop 2.7.7
 ```sh
 cd /opt
 wget http://apache.01link.hk/hadoop/common/hadoop-2.7.7/hadoop-2.7.7.tar.gz
@@ -16,7 +16,7 @@ tar zxvf hadoop-2.7.7.tar.gz
 
 ## Setup Hadoop Parameters
 ```sh
-cd etc/hadoop
+cd /opt/hadoop-2.7.7etc/hadoop
 vim hadoop-env.sh
 vim core-site.xml
 vim hdfs-site.xml
@@ -74,19 +74,6 @@ export HADOOP_HOME=/opt/hadoop-2.7.7
 export CLASSPATH=$HADOOP_HOME/lib
 export PATH=$PATH:$HADOOP_HOME/sbin:$HADOOP_HOME/bin
 ```
-
-## Generate SSH Key Pair
-```sh
-ssh-keygen -t ecdsda -b 521 -f ~/.ssh/id_ecdsa -N ''
-```
-
-## Install the SSH Public Key
-```sh
-ssh-copy-id -i id_ecdsa.pub hduser@master
-ssh-copy-id -i id_ecdsa.pub hduser@slaveX
-```
-- Note: `slaveX` is just a placeholder for the hostname of a slave.
-- Note: Install the public key on each slave.
 
 ## Copy the Hadoop Installation to Slaves
 ```sh
