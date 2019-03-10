@@ -30,5 +30,5 @@ sudo xl create /etc/xen/vmX.cfg
 ```
 extra = 'ipv6.disable=1'
 ```
-- Note: `vmX` is a placeholder for the hostname of a VM.
+- Note: `vmX` is a just placeholder for the hostname of a VM.
 - Note: Repeat this step for each VM.

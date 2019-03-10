@@ -1,4 +1,4 @@
-# Hadoop 2.7.7 - Part 1
+# Install JDK
 
 # Login as admin@master, and admin@slaveX
 
@@ -16,7 +16,7 @@ free -h
 4.3.2.2 slaveX
 ```
 - Note: The IPs are just example IPs.
-- Note: `slaveX` is a placeholder for the hostname of a slave.
+- Note: `slaveX` is a just placeholder for the hostname of a slave.
 - Note: Add an entry for each slave.
 
 ## Update Packages

@@ -1,4 +1,4 @@
-# Hadoop 2.7.7 - Part 4
+# Format the Namenode
 
 # Login as hduser@master
 
