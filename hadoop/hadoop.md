@@ -1,4 +1,4 @@
-# Hadoop on Dom0
+# Hadoop 2.7.7 - Part 1
 
 # Login as admin@dom0
 
@@ -78,6 +78,11 @@ sudo apt-get -y install oracle-java8-installer
 ```sh
 sudo addgroup hadoop
 sudo adduser --ingroup hadoop hduser
+```
+
+## Protect Home Directory
+```sh
+chmod 700 /home/hduser
 ```
 
 ## Setup Directories for Hadoop
