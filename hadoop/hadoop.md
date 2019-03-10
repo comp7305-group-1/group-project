@@ -1,8 +1,8 @@
-# Hadoop 2.7.7 - Part 0
+# Disable IPv6
 
 # Login as admin@dom0
 
-## Disable IPv6 on Dom0
+## Disable IPv6 on Dom0 / Bare Metal
 ```sh
 sudo vim /etc/default/grub
 sudo update-grub
@@ -20,15 +20,15 @@ sudo reboot
   GRUB_CMDLINE_LINUX="ipv6.disable=1"
   ```
 
-## Disable IPv6 on DomU
+## Disable IPv6 on Dom0 for DomU
 ```sh
-sudo xl destroy slaveX
-sudo vim /etc/xen/slaveX.cfg
-sudo xl create /etc/xen/slaveX.cfg
+sudo xl destroy vmX
+sudo vim /etc/xen/vmX.cfg
+sudo xl create /etc/xen/vmX.cfg
 ```
-`/etc/xen/slaveX.cfg` (append the following line to the end):
+`/etc/xen/vmX.cfg` (append the following line to the end):
 ```
 extra = 'ipv6.disable=1'
 ```
-- Note: `slaveX` is a placeholder for the hostname of a slave.
-- Note: Repeat this step for each slave.
+- Note: `vmX` is a placeholder for the hostname of a VM.
+- Note: Repeat this step for each VM.
