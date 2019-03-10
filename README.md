@@ -14,7 +14,7 @@
 
 1. [Cryptographic Hash Solver on Spark](rainbow-table.md)
 1. [Unravel the Mysteries by Spark](solving-mysteries.md)
-
+1. [Fake Image Generation with Generative Adversarial Networks (GANs) with TensorFlow on Spark](fake_image_generation_with_gans.md)
 
 ### Job Division among Members:
 
