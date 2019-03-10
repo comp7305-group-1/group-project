@@ -8,7 +8,7 @@
    - Once on Master
    - Once on each Slave
    - Login as admin@master on Master
-   - Login as admin@slaveX on each Save
+   - Login as admin@slaveX on each Slave
 1. [Install Hadoop](install-hadoop.md)
     - Once on Master
     - Login as hduser@master
