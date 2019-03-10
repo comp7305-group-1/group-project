@@ -1,4 +1,4 @@
-# Initial Setup (on Dom0)
+# Install Xen
 
 ## Update Packages
 ```sh
