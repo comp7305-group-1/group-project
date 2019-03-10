@@ -4,27 +4,30 @@
 
 ## Create the Image of the VM
 ```sh
-sudo xen-create-image --hostname=vm1
+sudo xen-create-image --hostname=vmX
 ```
-- Note: Let `vm1` be the name of the VM
+- Note: `vmX` is just a placeholder for the hostname of a VM.
 - Note: Save the command output
 
 ## (Optional) Monitor the Creation of the Image
 ```sh
-sudo tail -f /var/log/xen-tools/vm1.log
+sudo tail -f /var/log/xen-tools/vmX.log
 ```
+- Note: `vmX` is just a placeholder for the hostname of a VM.
 - Note: Execute this on another terminal
 
 ## Configure the Parameters of the VM
 ```sh
-sudo vim /etc/xen/vm1.cfg
+sudo vim /etc/xen/vmX.cfg
 ```
+- Note: `vmX` is just a placeholder for the hostname of a VM.
 - Note: Change the MAC address
 
 ## Start the VM
 ```sh
-sudo xl create /etc/xen/vm1.cfg -c
+sudo xl create /etc/xen/vmX.cfg -c
 ```
+- Note: `vmX` is just a placeholder for the hostname of a VM.
 - Note: Use `root` for username, and the password saved from the previous step
 
 # On DomU
@@ -94,7 +97,8 @@ reboot
 
 # On Dom0
 
-## Copy the SSH Public Key to the VM
+## Install the SSH Public Key
 ```sh
-ssh-copy-id -i ~/.ssh/id_ecdsa.pub admin@vm1
+ssh-copy-id -i ~/.ssh/id_ecdsa.pub admin@vmX
 ```
+- Note: `vmX` is just a placeholder for the hostname of a VM.
