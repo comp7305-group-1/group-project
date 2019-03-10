@@ -63,7 +63,7 @@ sudo apt-get install xen-tools xen-utils xenwatch virt-manager
 ```sh
 sudo vim /etc/xen/xend-config.sxp
 ```
-Uncomment this line:
+Uncomment the following line:
 ```
 (xend-unix-server yes)
 ```
