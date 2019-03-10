@@ -90,7 +90,7 @@ ssh-copy-id -i id_ecdsa.pub hduser@slaveX
 
 ## Copy the Hadoop Installation to Slaves
 ```sh
-scp /opt/hadoop slaveX:/opt/
+scp /opt/hadoop-2.7.7 slaveX:/opt/
 ```
 - Note: `slaveX` is just a placeholder for the hostname of a slave.
 - Note: Copy the Hadoop installation to each slave.
