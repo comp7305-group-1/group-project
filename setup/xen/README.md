@@ -1,13 +1,13 @@
 # Xen 4.9 Setup Steps
 
-1. [Install Xen](xen-install.md)
+1. [Install Xen](install-xen.md)
    - Once on Bare Metal
    - Login as admin@bare-metal
    - Turn Bare Metal to Dom0
-1. [Setup Dom0](dom0-setup.md)
+1. [Setup Dom0](setup-dom0.md)
    - Once on Dom0
    - Login as admin@dom0
-1. [Setup a New VM](domu-setup.md)
+1. [Setup a New VM](setup-domu.md)
    - Every time a new DomU is created
    - Login as admin@dom0
    - Then login as root@domu

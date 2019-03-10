@@ -16,11 +16,11 @@ sudo vim /etc/hosts
 `/etc/hosts`:
 ```sh
 127.0.0.1 localhost
-4.3.2.1 master
-4.3.2.2 slaveX
+192.168.1.2 master
+192.168.1.3 slaveX
 ```
-- Note: The IPs are just example IPs.
-- Note: `slaveX` is a just placeholder for the hostname of a slave.
+- Note: `192.168.1.2` and `192.168.1.3` are just placeholders for the IP of the master and a slave.
+- Note: `master` and `slaveX` are just placeholders for the hostname of the master and a slave.
 - Note: Add an entry for each slave.
 
 ## Update Packages
