@@ -12,14 +12,14 @@ sudo -u hduser -i
 chmod 700 ~
 ```
 
-## Download and Extract Hadoop 2.7
+## Download and Install Hadoop 2.7
 ```sh
 cd /opt
 wget http://apache.01link.hk/hadoop/common/hadoop-2.7.7/hadoop-2.7.7.tar.gz
 tar zxvf hadoop-2.7.7.tar.gz
 ```
 
-## Edit Haddop Environment
+## Setup Hadoop Parameters
 ```sh
 cd etc/hadoop
 vim hadoop-env.sh
@@ -59,11 +59,16 @@ master
 ```
 `/opt/hadoop-2.7.7/etc/hadoop/slaves`:
 ```
-slave1
-slave2
+slaveX
 ```
+- Note: `slaveX` is just a placeholder for the hostname of a slave.
+- Note: Add an entry for each slave.
 
 ## Setup Environment Variables for JDK
+```sh
+vim ~/.bash_aliases
+```
+`~/.bash_aliases` (append the following lines to the end):
 ```sh
 export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64  # For OpenJDK
 #export JAVA_HOME=/usr/lib/jvm/java-8-oracle        # For Oracke JDK
@@ -71,7 +76,11 @@ export JRE_HOME=$JAVA_HOME/jre
 export PATH=$PATH:$JAVA_HOME/bin:$JRE_HOME/bin
 ```
 
-## Setup environment variables for Hadoop
+## Setup Environment Variables for Hadoop
+```sh
+vim ~/.bash_aliases
+```
+`~/.bash_aliases` (append the following lines to the end):
 ```sh
 export HADOOP_HOME=/opt/hadoop-2.7.7
 export CLASSPATH=$HADOOP_HOME/lib
@@ -88,11 +97,13 @@ ssh-keygen -t ecdsda -b 521 -f ~/.ssh/id_ecdsa -N ''
 ssh-copy-id -i id_ecdsa.pub hduser@master
 ssh-copy-id -i id_ecdsa.pub hduser@slaveX
 ```
+- Note: `slaveX` is just a placeholder for the hostname of a slave.
+- Note: Install the public key on each slave.
 
-## Copy the base directory to slaves
+## Copy the Base Directory to Slaves
 (pending)
 
-## Format the namenode:
+## Format the Namenode:
 ```sh
 hdfs namenode -format
 ```
