@@ -9,7 +9,7 @@ Note: The following steps have to be done once on master, and once on each slave
 free -h
 ```
 
-## Check and update /etc/hosts
+## Check and Update /etc/hosts
 ```sh
 127.0.0.1 localhost
 4.3.2.1 master
