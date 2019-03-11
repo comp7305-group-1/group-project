@@ -1,8 +1,8 @@
-# Cryptographic Hash Solver on Spark
+# Password Cracking using Rainbow Table on Spark
 
 ### Project Description
 
-Cryptographic hash solver using rainbow table. The user inputs the cryptographic hash, like MD5 or SHA1, the cluster tries to find the original text using a rainbow table.
+The objective of this project is to build a cryptographic hash solver based on rainbow table. The user inputs the cryptographic hash, like MD5 or SHA1, the cluster tries to find the original text using a rainbow table.
 
 ### Pros
 
