@@ -20,5 +20,5 @@
 
 - Member 1: Coding, Cluster Setup, Team Coordination
 - Member 2: Cluster Setup, Cluster Maintenance
-- Member 3: Data Collection
+- Member 3: Coding, Cluster Setup
 - Member 4: (pending)
