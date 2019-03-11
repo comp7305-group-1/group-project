@@ -12,7 +12,7 @@
 
 ### Project Ideas:
 
-1. [Cryptographic Hash Solver on Spark](rainbow-table.md)
+1. [Password Cracking using Rainbow Table on Spark](rainbow-table.md)
 1. [Unravel the Mysteries by Spark](solving-mysteries.md) <-- Chosen
 1. [Fake Image Generation with Generative Adversarial Networks (GANs) with TensorFlow on Spark](fake_image_generation_with_gans.md)
 
