@@ -44,14 +44,14 @@ export PATH=$PATH:$PSARK_HOME/sbin:$SPARK_HOME/bin
 
 ## Copy the Spark Installation to Slaves
 ```sh
-scp /opt/spark-2.4.0-bin-hadoop2.7 slaveX:/opt/
+scp /opt/spark-2.4.0-bin-hadoop2.7 hduser@slaveX:/opt/
 ```
 - Note: `slaveX` is just a placeholder for the hostname of a slave.
 - Note: Copy the Spark installation to each slave.
 
 ## Copy the Environment Variable Settings to Slaves
 ```sh
-scp ~/.bash_aliases slaveX:
+scp ~/.bash_aliases hduser@slaveX:
 ```
 - Note: `slaveX` is just a placeholder for the hostname of a slave.
 - Note: Copy the environment variable settings to each slave.
