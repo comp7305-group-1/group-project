@@ -39,7 +39,7 @@ def initialism(sentence):
 
 def start(user_input="tpg", total_count=1):
     count = 0
-    print("Start Mystery")
+    print("Start Mystery===============================================")
     # Step 1
     zips_dir = get_zips()
     print("Number of zips found: %s" % len(zips_dir))
@@ -50,11 +50,10 @@ def start(user_input="tpg", total_count=1):
         for sentence in sentences:
             # Step 4
             if user_input.lower() in initialism(sentence):
-                print("Possible mystery found %s: \n%s" % (count, sentence))
-                hdfs_lines = sc.textFile("hdfs:///user/hadoop/ml-100k/u.data", minPartitions=1)
                 count += 1
+                print("Possible mystery found %s: \n%s" % (count, sentence))
                 if count >= total_count:
-                    print("End Mystery")
+                    print("End Mystery===============================================")
                     return
 
 if __name__ == '__main__':
