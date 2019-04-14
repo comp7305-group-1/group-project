@@ -77,14 +77,14 @@ export PATH=$PATH:$HADOOP_HOME/sbin:$HADOOP_HOME/bin
 
 ## Copy the Hadoop Installation to Slaves
 ```sh
-scp /opt/hadoop-2.7.7 slaveX:/opt/
+scp /opt/hadoop-2.7.7 hduser@slaveX:/opt/
 ```
 - Note: `slaveX` is just a placeholder for the hostname of a slave.
 - Note: Copy the Hadoop installation to each slave.
 
 ## Copy the Environment Variable Settings to Slaves
 ```sh
-scp ~/.bash_aliases slaveX:
+scp ~/.bash_aliases hduser@slaveX:
 ```
 - Note: `slaveX` is just a placeholder for the hostname of a slave.
 - Note: Copy the environment variable settings to each slave.
