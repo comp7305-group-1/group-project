@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>COMP7305 Group 01 - WebSocket Test</title>
+  <script type="text/javascript" language="javascript">
+var wsUri = 'ws://localhost:12345/WebSocketTestWS';
+//var wsUri = 'ws://echo.websocket.org/';
+var output;
+var socket;
+function ready() {
+  output = document.getElementById('output');
+  socket = new WebSocket(wsUri);
+  {{/* socket.addEventListener('open', function(event) {
+    console.log('socket.onopen');
+    console.debug('socket.onopen', event);
+  });
+  socket.addEventListener('message', function(event) {
+    console.log('socket.onmessage');
+    console.debug('socket.onmessage', event);
+  }); */}}
+  socket.onopen = function(event) {
+    var msg = 'Hello, Server';
+    writeToScreen('socket.onopen');
+    {{/* writeToScreen('SENT: ' + msg);
+    socket.send(msg); */}}
+  };
+  socket.onmessage = function(event) {
+    writeToScreen('socket.onmessage');
+    writeToScreen('RECEIVED: ' + event.data);
+    {{/* socket.close(); */}}
+  };
+  socket.onclose = function(event) {
+    writeToScreen('socket.onclose');
+  };
+  socket.onerror = function(event) {
+    writeToScreen('socket.onerror');
+  };
+  //socket.send('Hello, server');
+}
+
+function writeToScreen(message) {
+  var pre = document.createElement('p');
+  pre.style.wordWrap = 'break-word';
+  pre.innerHTML = message;
+  output.appendChild(pre);
+}
+
+document.addEventListener("DOMContentLoaded", ready);
+</script>
+</head>
+<body>
+  <h1>COMP7305 Group 01 - WebSocket Test</h1>
+  <div id="output"></div>
+</body>
+</html>
