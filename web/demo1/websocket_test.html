@@ -11,24 +11,24 @@ var socket;
 function ready() {
   output = document.getElementById('output');
   socket = new WebSocket(wsUri);
-  {{/* socket.addEventListener('open', function(event) {
-    console.log('socket.onopen');
-    console.debug('socket.onopen', event);
-  });
-  socket.addEventListener('message', function(event) {
-    console.log('socket.onmessage');
-    console.debug('socket.onmessage', event);
-  }); */}}
+  // socket.addEventListener('open', function(event) {
+  //   console.log('socket.onopen');
+  //   console.debug('socket.onopen', event);
+  // });
+  // socket.addEventListener('message', function(event) {
+  //   console.log('socket.onmessage');
+  //   console.debug('socket.onmessage', event);
+  // });
   socket.onopen = function(event) {
     var msg = 'Hello, Server';
     writeToScreen('socket.onopen');
-    {{/* writeToScreen('SENT: ' + msg);
-    socket.send(msg); */}}
+    // writeToScreen('SENT: ' + msg);
+    // socket.send(msg);
   };
   socket.onmessage = function(event) {
     writeToScreen('socket.onmessage');
     writeToScreen('RECEIVED: ' + event.data);
-    {{/* socket.close(); */}}
+    // socket.close();
   };
   socket.onclose = function(event) {
     writeToScreen('socket.onclose');
