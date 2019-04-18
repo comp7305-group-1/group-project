@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>COMP7305 Group 01 - SparkPi Submit ({{.RequestID}})</title>
+</head>
+<body>
+  <script type="application/javascript">
+function ready() {
+  var rid = document.getElementById("rid").value;
+  var stdout = document.getElementById('stdout');
+  var socket = new WebSocket('ws://localhost:12345/SparkPiSubmitStdout?rid=' + rid);
+  socket.onopen = function() {
+    console.log("socket.onopen");
+  };
+  socket.onmessage = function(event) {
+    console.log(event.data);
+    //stdout.value += event.data;
+  };
+  socket.onclose = function() {
+    console.log("socket.onclose");
+  };
+}
+document.addEventListener("DOMContentLoaded", ready);
+  </script>
+  <h1>COMP7305 Group 01 - SparkPi Submit ({{.RequestID}})</h1>
+  <form>
+    <label for="stdout">Standard Output:</label><br>
+    <textarea id="stdout" name="stdout" cols="80" rows="25" readonly="readonly" style="font-family: monospace"></textarea><br>
+    <br>
+    <label for="stderr">Standard Error:</label><br>
+    <textarea id="stderr" name="stderr" cols="80" rows="25" readonly="readonly" style="font-family: monospace"></textarea><br>
+    <br>
+    <label for="result">Result:</label><br>
+    <input type="text" id="result" name="result" size="80" readonly="readonly" style="font-family: monospace">
+    <input type="hidden" id="rid" name="rid" value="{{.RequestID}}">
+  </form><br>
+  <a href="/SparkPi">Go back to SparkPi</a>
+</body>
+</html>
