@@ -5,7 +5,7 @@
   <title>COMP7305 Group 01 - SparkPi Submit</title>
   <script type="text/javascript" language="javascript">
 function ready() {
-  var wsUri = 'ws://localhost:12345/SparkPiSubmitWS?pc={{.Partition}}';
+  var wsUri = 'ws://' + location.host + '/SparkPiSubmitWS?pc={{.Partition}}';
   var stdout;
   var stderr;
   var socket;
