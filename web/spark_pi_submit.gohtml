@@ -3,26 +3,56 @@
 <head>
   <meta charset="utf-8">
   <title>COMP7305 Group 01 - SparkPi Submit ({{.RequestID}})</title>
-</head>
-<body>
   <script type="application/javascript">
 function ready() {
-  var rid = document.getElementById("rid").value;
-  var stdout = document.getElementById('stdout');
-  var socket = new WebSocket('ws://localhost:12345/SparkPiSubmitStdout?rid=' + rid);
-  socket.onopen = function() {
-    console.log("socket.onopen");
+  var wsUriStdout = 'ws://localhost:12345/SparkPiSubmitStdoutWS?rid=';
+  {{/* var wsUriStderr = 'ws://localhost:12345/SparkPiSubmitStderrWS?rid='; */}}
+  var rid;
+  var stdout;
+  {{/* var stderr; */}}
+  var socketStdout;
+  {{/* var socketStderr; */}}
+
+  rid = document.getElementById("rid").value;
+  stdout = document.getElementById('stdout');
+  {{/* stderr = document.getElementById('stderr'); */}}
+
+  // WebSocket for stdout
+  socketStdout = new WebSocket(wsUriStdout + rid);
+  socketStdout.onopen = function(event) {
+    console.log("socketStdout.onopen");
   };
-  socket.onmessage = function(event) {
+  socketStdout.onmessage = function(event) {
+    // console.log(event.data);
+    stdout.value += event.data;
+  };
+  socketStdout.onclose = function(event) {
+    console.log("socketStdout.onclose");
+  };
+  socketStdout.onerror = function(event) {
+    console.log('socketStdout.onerror');
+  };
+
+  // WebSocket for stderr
+  {{/* socketStderr = new WebSocket(wsUriStderr + rid);
+  socketStderr.onopen = function(event) {
+    console.log("socketStderr.onopen");
+  };
+  socketStderr.onmessage = function(event) {
     console.log(event.data);
-    //stdout.value += event.data;
+    stderr.value += event.data;
   };
-  socket.onclose = function() {
-    console.log("socket.onclose");
+  socketStderr.onclose = function(event) {
+    console.log("socketStderr.onclose");
   };
+  socketStderr.onerror = function(event) {
+    console.log('socketStdout.onerror');
+  }; */}}
 }
-document.addEventListener("DOMContentLoaded", ready);
+{{/* document.addEventListener("DOMContentLoaded", ready); */}}
   </script>
+</head>
+<body onload="javascript:ready();">
   <h1>COMP7305 Group 01 - SparkPi Submit ({{.RequestID}})</h1>
   <form>
     <label for="stdout">Standard Output:</label><br>

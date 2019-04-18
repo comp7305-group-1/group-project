@@ -18,45 +18,20 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-func main0() {
-	cmd := exec.Command("ls", "-al", "/sbin")
-	stdout, err := cmd.StdoutPipe()
-	if err != nil {
-		log.Fatal(err)
-		return
-	}
-	stderr, err := cmd.StderrPipe()
-	if err != nil {
-		log.Fatal(err)
-		return
-	}
-	go func() {
-		scanner := bufio.NewScanner(stdout)
-		scanner.Split(bufio.ScanLines)
-		for scanner.Scan() {
-			line := scanner.Text()
-			fmt.Println(line)
-		}
-	}()
-	go func() {
-		scanner := bufio.NewScanner(stderr)
-		scanner.Split(bufio.ScanLines)
-		for scanner.Scan() {
-			line := scanner.Text()
-			fmt.Println("STDERR: " + line)
-		}
-	}()
-	if err := cmd.Start(); err != nil {
-		log.Fatal(err)
-	}
-	if err := cmd.Wait(); err != nil {
-		log.Fatal(err)
-	}
+type StandardOutputStreams struct {
+	Stdout io.ReadCloser
+	Stderr io.ReadCloser
+}
+
+type StringChannels struct {
+	ChStdout <-chan string
+	ChStderr <-chan string
 }
 
 var (
 	processMapLock sync.Mutex
-	processMap     = map[string]struct{ Stdout, Stderr io.ReadCloser }{}
+	processMap     = map[string]*StandardOutputStreams{}
+	processMapAlt  = map[string]StringChannels{}
 )
 
 func main() {
@@ -64,13 +39,24 @@ func main() {
 	http.HandleFunc("/", handleIndex)
 	http.HandleFunc("/SparkPi", handleSparkPi)
 	http.HandleFunc("/SparkPiSubmit", handleSparkPiSubmit)
-	http.HandleFunc("/SparkPiSubmitStdout", handleSparkPiSubmitStdout)
-	http.HandleFunc("/SparkPiSubmitStderr", handleSparkPiSubmitStderr)
+	http.HandleFunc("/SparkPiSubmitStdoutWS", handleSparkPiSubmitStdoutWS)
+	http.HandleFunc("/SparkPiSubmitStderrWS", handleSparkPiSubmitStderrWS)
 	http.HandleFunc("/SparkPiSubmitResult", handleSparkPiSubmitResult)
-	http.HandleFunc("/SlowResponseTest", handleSlowResponseTest)
-	http.HandleFunc("/WebSocketTest", handleWebSocketTest)
-	http.HandleFunc("/WebSocketTestWS", handleWebSocketTestWS)
 	log.Fatal(http.ListenAndServe(":12345", nil))
+}
+
+func writeError(w http.ResponseWriter, err error) {
+	log.Println(err)
+	w.WriteHeader(http.StatusInternalServerError)
+	w.Header().Set("Content-Type", "text/plain;charset=UTF-8")
+	w.Write([]byte(err.Error()))
+}
+
+func writeErrorString(w http.ResponseWriter, s string) {
+	log.Println(s)
+	w.WriteHeader(http.StatusInternalServerError)
+	w.Header().Set("Content-Type", "text/plain;charset=UTF-8")
+	w.Write([]byte(s))
 }
 
 func writeFile(w http.ResponseWriter, filename string) {
@@ -90,18 +76,6 @@ func writeFile(w http.ResponseWriter, filename string) {
 	w.Write(bytes)
 }
 
-func writeError(w http.ResponseWriter, err error) {
-	w.WriteHeader(http.StatusInternalServerError)
-	w.Header().Set("Content-Type", "text/plain;charset=UTF-8")
-	w.Write([]byte(err.Error()))
-}
-
-func writeErrorString(w http.ResponseWriter, s string) {
-	w.WriteHeader(http.StatusInternalServerError)
-	w.Header().Set("Content-Type", "text/plain;charset=UTF-8")
-	w.Write([]byte(s))
-}
-
 func handleIndex(w http.ResponseWriter, req *http.Request) {
 	writeFile(w, "index.html")
 }
@@ -116,56 +90,66 @@ func handleSparkPiSubmit(w http.ResponseWriter, req *http.Request) {
 		writeError(w, err)
 		return
 	}
-	requestID := 0
-	requestIDString := ""
-	func() {
+
+	var requestID string
+	var cmd *exec.Cmd
+
+	result := func() bool {
 		processMapLock.Lock()
 		defer processMapLock.Unlock()
 		for {
-			requestID = rand.Int()
-			requestIDString = strconv.Itoa(requestID)
-			fmt.Println(requestIDString)
-			if _, ok := processMap[requestIDString]; !ok {
+			requestIDInt := rand.Int()
+			requestID = strconv.Itoa(requestIDInt)
+			fmt.Printf("requestID: %s\n", requestID)
+			if _, ok := processMap[requestID]; !ok {
 				break
 			}
-			break
 		}
-		processMap[requestIDString] = struct{ Stdout, Stderr io.ReadCloser }{}
+
+		cmd = exec.Command("ls", "-al", "/sbin")
+
+		// stdout
+		stdout, err := cmd.StdoutPipe()
+		if err != nil {
+			writeError(w, err)
+			return false
+		}
+
+		// stderr
+		stderr, err := cmd.StderrPipe()
+		if err != nil {
+			writeError(w, err)
+			return false
+		}
+
+		processMap[requestID] = &StandardOutputStreams{stdout, stderr}
+
+		return true
 	}()
 
-	cmd := exec.Command("ls", "-al", "/sbin")
-
-	stdout, err := cmd.StdoutPipe()
-	if err != nil {
-		writeError(w, err)
+	if !result {
 		return
 	}
-
-	stderr, err := cmd.StderrPipe()
-	if err != nil {
-		writeError(w, err)
-		return
-	}
-
-	processMap[requestIDString] = struct{ Stdout, Stderr io.ReadCloser }{stdout, stderr}
 
 	if err := cmd.Start(); err != nil {
 		writeError(w, err)
 		return
 	}
-	// fmt.Println("cmd.Start() called")
+	fmt.Println("cmd.Start() returned")
 
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "text/html;charset=UTF-8")
-	t.Execute(w, struct{ RequestID string }{requestIDString})
-	// fmt.Println("t.Execute() called")
+	t.Execute(w, struct{ RequestID string }{requestID})
+	fmt.Println("t.Execute() returned")
+	w.(http.Flusher).Flush()
 
 	if err := cmd.Wait(); err != nil {
 		log.Fatal(err)
 	}
+	fmt.Println("cmd.Wait() returned")
 }
 
-func handleSparkPiSubmitStdout(w http.ResponseWriter, req *http.Request) {
+func handleSparkPiSubmitStdoutWS(w http.ResponseWriter, req *http.Request) {
 	url := req.URL
 	if url == nil {
 		writeErrorString(w, "url is nil")
@@ -185,127 +169,38 @@ func handleSparkPiSubmitStdout(w http.ResponseWriter, req *http.Request) {
 	} else if rid := rids[0]; len(rid) == 0 {
 		writeErrorString(w, "len(rid[0]) == 0")
 		return
-	} else if readers, ok := processMap[rid]; !ok {
+	} else if streams, ok := processMap[rid]; !ok {
 		writeErrorString(w, "invalid rid: "+rid)
 		return
 	} else {
-		// upgrader := websocket.Upgrader{}
-		conn, err := websocket.Upgrade(w, req, w.Header(), 4096, 4096)
+		fmt.Printf("rid = %s\n", rid)
+		conn, err := websocket.Upgrade(w, req, w.Header(), 1024, 1024)
 		if err != nil {
-			// writeError(w, err)
-			log.Println(err)
-			return
-		}
-		defer conn.Close()
-
-		writeCloser, err := conn.NextWriter(websocket.TextMessage)
-		if err != nil {
-			// writeError(w, err)
-			log.Println(err)
+			writeError(w, err)
 			return
 		}
 
-		stdout := readers.Stdout
-		// w.WriteHeader(http.StatusOK)
-		// w.Header().Set("Content-Type", "text/html;charset=UTF-8")
-		// io.Copy(writeCloser, stdout)
-		buffer := make([]byte, 4096)
-		for _, err := stdout.Read(buffer); err != nil; {
-			if _, err2 := writeCloser.Write(buffer); err2 != nil {
-				break
+		go func() {
+			defer conn.Close()
+
+			stdout := streams.Stdout
+			scanner := bufio.NewScanner(stdout)
+			scanner.Split(bufio.ScanLines)
+			for scanner.Scan() {
+				line := scanner.Text()
+				fmt.Println(line)
+				// if err := conn.WriteMessage(websocket.TextMessage, buffer); err != nil {
+				// 	fmt.Println(err)
+				// 	break
+				// }
 			}
-		}
+		}()
 	}
 }
 
-func handleSparkPiSubmitStderr(w http.ResponseWriter, req *http.Request) {
-	url := req.URL
-	if url == nil {
-		writeErrorString(w, "url is nil")
-		return
-	}
-	query := url.Query()
-	if query == nil {
-		writeErrorString(w, "query is nil")
-		return
-	}
-	if rids, ok := query["rid"]; !ok {
-		writeErrorString(w, "rid is not a key of query")
-		return
-	} else if len(rids) == 0 {
-		writeErrorString(w, "len(rid) == 0")
-		return
-	} else if rid := rids[0]; len(rid) == 0 {
-		writeErrorString(w, "len(rid[0]) == 0")
-		return
-	} else if readers, ok := processMap[rid]; !ok {
-		writeErrorString(w, "invalid rid: "+rid)
-		return
-	} else {
-		stderr := readers.Stderr
-		w.WriteHeader(http.StatusOK)
-		w.Header().Set("Content-Type", "text/html;charset=UTF-8")
-		io.Copy(w, stderr)
-	}
+func handleSparkPiSubmitStderrWS(w http.ResponseWriter, req *http.Request) {
 }
 
 func handleSparkPiSubmitResult(w http.ResponseWriter, req *http.Request) {
 	// TODO: Write this!
-}
-
-func handleSlowResponseTest(w http.ResponseWriter, req *http.Request) {
-	w.WriteHeader(http.StatusOK)
-	w.Header().Set("Content-Type", "text/plain;charset=UTF-8")
-	if f, ok := w.(http.Flusher); ok {
-		fmt.Println("Yes")
-		fmt.Fprintf(w, "%d\n", rand.Int())
-		f.Flush()
-		for i := 0; i < 100; i++ {
-			fmt.Fprintf(w, "%d\n", i)
-			f.Flush()
-			time.Sleep(50 * time.Millisecond)
-		}
-	} else {
-		fmt.Fprintf(w, "%d\n", rand.Int())
-		for i := 0; i < 100; i++ {
-			fmt.Fprintf(w, "%d\n", i)
-			time.Sleep(50 * time.Millisecond)
-		}
-	}
-}
-
-func handleWebSocketTest(w http.ResponseWriter, req *http.Request) {
-	writeFile(w, "websocket_test.html")
-}
-
-func handleWebSocketTestWS(w http.ResponseWriter, req *http.Request) {
-	fmt.Println("handleWebSocketTestWS is called")
-	conn, err := websocket.Upgrade(w, req, w.Header(), 1024, 1024)
-	if err != nil {
-		fmt.Println(err)
-		http.Error(w, "Could not open websocket connection", http.StatusBadRequest)
-		return
-	}
-
-	go func() {
-		defer conn.Close()
-		// messageType, p, err := conn.ReadMessage()
-		// if err != nil {
-		// 	fmt.Printf("Message Type: %d, Buffer: %s, Error: %s\n", messageType, string(p), err.Error())
-		// 	return
-		// } else {
-		// 	fmt.Printf("Message Type: %d, Buffer: %s, Error: %s\n", messageType, string(p))
-		// }
-		for i := 0; i < 100; i++ {
-			r := rand.Int()
-			message := fmt.Sprintf("Hello, %d", r)
-			// m := map[string]string{
-			// 	"message": message,
-			// }
-			// conn.WriteJSON(m)
-			conn.WriteMessage(websocket.TextMessage, []byte(message))
-			// time.Sleep(time.Second)
-		}
-		fmt.Println("The for loop ended")
-	}()
 }
