@@ -72,56 +72,67 @@ func handleSparkPiSubmit(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	requestIDInt := rand.Int()
-	requestID := strconv.Itoa(requestIDInt)
+	if err := req.ParseForm(); err != nil {
+		writeError(w, err)
+		return
+	}
+
+	partition := req.FormValue("pc")
+	if _, err := strconv.Atoi(partition); err != nil {
+		writeError(w, err)
+		return
+	}
 
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "text/html;charset=UTF-8")
-	t.Execute(w, struct{ RequestID string }{requestID})
+	t.Execute(w, struct{ Partition string }{partition})
 }
 
 func handleSparkPiSubmitWS(w http.ResponseWriter, req *http.Request) {
-	// url := req.URL
-	// if url == nil {
-	// 	writeErrorString(w, "url is nil")
-	// 	return
-	// }
-	// query := url.Query()
-	// if query == nil {
-	// 	writeErrorString(w, "query is nil")
-	// 	return
-	// }
-	// if rids, ok := query["rid"]; !ok {
-	// 	writeErrorString(w, "rid is not a key of query")
-	// 	return
-	// } else if len(rids) == 0 {
-	// 	writeErrorString(w, "len(rid) == 0")
-	// 	return
-	// } else if rid := rids[0]; len(rid) == 0 {
-	// 	writeErrorString(w, "len(rid[0]) == 0")
-	// 	return
-	// } else if streams, ok := processMap[rid]; !ok {
-	// 	writeErrorString(w, "invalid rid: "+rid)
-	// 	return
-	// }
+	url := req.URL
+	if url == nil {
+		writeErrorString(w, "url is nil")
+		return
+	}
+	query := url.Query()
+	if query == nil {
+		writeErrorString(w, "query is nil")
+		return
+	}
+	partitionSlice, ok := query["pc"]
+	if !ok {
+		writeErrorString(w, "pc is not a key of query")
+		return
+	}
+	if len(partitionSlice) == 0 {
+		writeErrorString(w, "len(partitionSlice) == 0")
+		return
+	}
+	partition := partitionSlice[0]
+	if _, err := strconv.Atoi(partition); err != nil {
+		writeError(w, err)
+		return
+	}
 
-	// cmd
-	cmd := exec.Command("ls", "-alR", "/etc/")
+	// Command
+	// cmd := exec.Command("ls", "-alR", "/etc/")
+	cmd := exec.Command("spark-submit", "--class", "org.apache.spark.examples.SparkPi", "--master", "yarn", "--deploy-mode", "client", "/opt/spark-2.4.0-bin-hadoop2.7/examples/jars/spark-examples_2.11-2.4.0.jar", partition)
 
-	// stdout
+	// Standard Output
 	stdout, err := cmd.StdoutPipe()
 	if err != nil {
 		writeError(w, err)
 		return
 	}
 
-	// stderr
+	// Standard Error
 	stderr, err := cmd.StderrPipe()
 	if err != nil {
 		writeError(w, err)
 		return
 	}
 
+	// WebSocket Connection
 	conn, err := websocket.Upgrade(w, req, w.Header(), 1024, 1024)
 	if err != nil {
 		writeError(w, err)
@@ -129,8 +140,10 @@ func handleSparkPiSubmitWS(w http.ResponseWriter, req *http.Request) {
 	}
 	defer conn.Close()
 
+	// WaitGroup
 	var wg sync.WaitGroup
 
+	// Goroutine for handling stdout
 	wg.Add(1)
 	go func() {
 		defer wg.Done()
@@ -145,6 +158,7 @@ func handleSparkPiSubmitWS(w http.ResponseWriter, req *http.Request) {
 		}
 	}()
 
+	// Goroutine for handling stderr
 	wg.Add(1)
 	go func() {
 		defer wg.Done()
