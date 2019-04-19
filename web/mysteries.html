@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>COMP7305 Group 01 - Unravel the Mysteries by Spark</title>
+</head>
+<body>
+  <h1>COMP7305 Group 01 - Unravel the Mysteries by Spark</h1>
+  <form action="/MysteriesResult" method="POST">
+    <table>
+      <tr>
+        <td><label for="mt">Mystery Text:</label></td>
+        <td><input type="text" id="mt" name="mt" value="wtspwf"></td>
+      </tr>
+      <tr>
+        <td valign="top"><label>Use Cached Result:</label></td>
+        <td>
+          <input type="radio" id="mode1" name="mode" value="1" checked="checked"><label for="mode1">No</label><br>
+          <input type="radio" id="mode2" name="mode" value="2"><label for="mode2">Yes</label>
+        </td>
+      </tr>
+      <tr>
+        <td><label for="pc">Partition Count:</label></td>
+        <td><input type="text" id="pc" name="pc" value="100"></td>
+      </tr>
+      <tr>
+        <td colspan="2">
+          <input type="submit">
+        </td>
+      </tr>
+    </table>
+  </form>
+</body>
+</html>

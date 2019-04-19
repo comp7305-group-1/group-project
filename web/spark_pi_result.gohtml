@@ -2,10 +2,10 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>COMP7305 Group 01 - SparkPi Submit</title>
+  <title>COMP7305 Group 01 - SparkPi Result</title>
   <script type="text/javascript" language="javascript">
 function ready() {
-  var wsUri = 'ws://' + location.host + '/SparkPiSubmitWS?pc={{.Partition}}';
+  var wsUri = 'ws://' + location.host + '/SparkPiResultWS?pc={{.Partition}}';
   var stdout;
   var stderr;
   var socket;
@@ -42,7 +42,7 @@ function ready() {
   <script type="text/javascript" language="javascript">
 document.addEventListener("DOMContentLoaded", ready);
   </script>
-  <h1>COMP7305 Group 01 - SparkPi Submit</h1>
+  <h1>COMP7305 Group 01 - SparkPi Result</h1>
   <form>
     <label for="stdout">Standard Output:</label><br>
     <textarea id="stdout" name="stdout" cols="200" rows="25" readonly="readonly" style="font-family: monospace"></textarea><br>

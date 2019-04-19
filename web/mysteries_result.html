@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>COMP7305 Group 01 - Unravel the Mysteries by Spark Result</title>
+  <script type="text/javascript" language="javascript">
+function ready() {
+  var wsUri = 'ws://' + location.host + '/MysteriesResultWS?pc={{.Partition}}';
+  var stdout;
+  var stderr;
+  var socket;
+
+  stdout = document.getElementById('stdout');
+  stderr = document.getElementById('stderr');
+
+  socket = new WebSocket(wsUri);
+  socket.onopen = function(event) {
+    console.log("socket.onopen");
+    showRunning();
+  };
+  socket.onmessage = function(event) {
+    // console.log(event.data);
+    var obj = JSON.parse(event.data);
+    var stream = obj['stream'];
+    var message = obj['message'];
+    if (stream == 'stdout') {
+      stdout.value += message + '\n';
+      stdout.scrollTop = stdout.scrollHeight;
+    } else if (stream == 'stderr') {
+      stderr.value += message + '\n';
+    }
+  };
+  socket.onclose = function(event) {
+    console.log("socket.onclose");
+    showCompleted();
+  };
+  socket.onerror = function(event) {
+    console.log('socket.onerror');
+  };
+}
+
+function showRunning() {
+  var status0 = document.getElementById('status0');
+  var status1 = document.getElementById('status1');
+  var status2 = document.getElementById('status2');
+
+  status0.classList.add('hidden');
+  status1.classList.remove('hidden');
+}
+
+function showCompleted() {
+  var status0 = document.getElementById('status0');
+  var status1 = document.getElementById('status1');
+  var status2 = document.getElementById('status2');
+
+  status1.classList.add('hidden');
+  status2.classList.remove('hidden');
+}
+  </script>
+  <style type="text/css">
+.red { color: red; }
+.green { color: green; }
+.blue { color: blue; }
+.hidden { display: none; }
+  </style>
+</head>
+<body>
+  <script type="text/javascript" language="javascript">
+//document.addEventListener("DOMContentLoaded", ready);
+  </script>
+  <h1>COMP7305 Group 01 - Unravel the Mysteries by Spark Result</h1>
+  <table>
+    <tr>
+      <th align="left">Mystery Text:</th>
+      <td>{{.MysteryText}}</td>
+    </tr>
+    <tr>
+      <th align="left">Use Cached Result:</th>
+      <td>{{.IsUsedCachedResult}}</td>
+    </tr>
+    <tr>
+      <th align="left">Partition Count:</th>
+      <td>{{.PartitionCount}}</td>
+    </tr>
+    <tr>
+      <th align="left">Status:</th>
+      <td>
+        <span id="status0" class="green">Waiting</span>
+        <span id="status1" class="red hidden">Running</span>
+        <span id="status2" class="blue hidden">Completed</span>
+      </td>
+    </tr>
+  </table><br>
+  <form>
+    <label for="stdout">Standard Output:</label><br>
+    <textarea id="stdout" name="stdout" cols="200" rows="25" readonly="readonly" style="font-family: monospace"></textarea><br>
+    <br>
+    <label for="stderr">Standard Error:</label><br>
+    <textarea id="stderr" name="stderr" cols="200" rows="25" readonly="readonly" style="font-family: monospace"></textarea><br>
+    <br>
+    <label for="result">Result:</label><br>
+    <input type="text" id="result" name="result" size="80" readonly="readonly" style="font-family: monospace">
+  </form><br>
+  <a href="/Mysteries">Go back to Unravel the Mysteries</a>
+</body>
+</html>

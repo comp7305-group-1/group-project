@@ -21,8 +21,11 @@ func main() {
 	rand.Seed(time.Now().UnixNano())
 	http.HandleFunc("/", handleIndex)
 	http.HandleFunc("/SparkPi", handleSparkPi)
-	http.HandleFunc("/SparkPiSubmit", handleSparkPiSubmit)
-	http.HandleFunc("/SparkPiSubmitWS", handleSparkPiSubmitWS)
+	http.HandleFunc("/SparkPiResult", handleSparkPiResult)
+	http.HandleFunc("/SparkPiResultWS", handleSparkPiResultWS)
+	http.HandleFunc("/Mysteries", handleMysteries)
+	http.HandleFunc("/MysteriesResult", handleMysteriesResult)
+	http.HandleFunc("/MysteriesResultWS", handleMysteriesResultWS)
 	log.Fatal(http.ListenAndServe(":12345", nil))
 }
 
@@ -65,8 +68,8 @@ func handleSparkPi(w http.ResponseWriter, req *http.Request) {
 	writeFile(w, "spark_pi.html")
 }
 
-func handleSparkPiSubmit(w http.ResponseWriter, req *http.Request) {
-	t, err := template.ParseFiles("spark_pi_submit.gohtml")
+func handleSparkPiResult(w http.ResponseWriter, req *http.Request) {
+	t, err := template.ParseFiles("spark_pi_result.gohtml")
 	if err != nil {
 		writeError(w, err)
 		return
@@ -88,7 +91,7 @@ func handleSparkPiSubmit(w http.ResponseWriter, req *http.Request) {
 	t.Execute(w, struct{ Partition string }{partition})
 }
 
-func handleSparkPiSubmitWS(w http.ResponseWriter, req *http.Request) {
+func handleSparkPiResultWS(w http.ResponseWriter, req *http.Request) {
 	url := req.URL
 	if url == nil {
 		writeErrorString(w, "url is nil")
@@ -184,4 +187,13 @@ func handleSparkPiSubmitWS(w http.ResponseWriter, req *http.Request) {
 
 	cmd.Wait()
 	// fmt.Println("cmd.Wait() returned")
+}
+
+func handleMysteries(w http.ResponseWriter, req *http.Request) {
+}
+
+func handleMysteriesResult(w http.ResponseWriter, req *http.Request) {
+}
+
+func handleMysteriesResultWS(w http.ResponseWriter, req *http.Request) {
 }
