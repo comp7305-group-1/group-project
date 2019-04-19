@@ -190,9 +190,50 @@ func handleSparkPiResultWS(w http.ResponseWriter, req *http.Request) {
 }
 
 func handleMysteries(w http.ResponseWriter, req *http.Request) {
+	writeFile(w, "mysteries.html")
 }
 
 func handleMysteriesResult(w http.ResponseWriter, req *http.Request) {
+	t, err := template.ParseFiles("mysteries_result.gohtml")
+	if err != nil {
+		writeError(w, err)
+		return
+	}
+
+	if err := req.ParseForm(); err != nil {
+		writeError(w, err)
+		return
+	}
+
+	mysteryText := req.FormValue("mt")
+
+	mode := req.FormValue("mode")
+	var isUsedCachedResult string
+	switch mode {
+	case "1":
+		isUsedCachedResult = "No"
+		break
+	case "2":
+		isUsedCachedResult = "Yes"
+		break
+	default:
+		writeErrorString(w, "invalid mode")
+		return
+	}
+
+	partitionCount := req.FormValue("pc")
+	if _, err := strconv.Atoi(partitionCount); err != nil {
+		writeError(w, err)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "text/html;charset=UTF-8")
+	t.Execute(w, map[string]string{
+		"MysteryText":        mysteryText,
+		"IsUsedCachedResult": isUsedCachedResult,
+		"PartitionCount":     partitionCount,
+	})
 }
 
 func handleMysteriesResultWS(w http.ResponseWriter, req *http.Request) {
