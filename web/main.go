@@ -237,4 +237,132 @@ func handleMysteriesResult(w http.ResponseWriter, req *http.Request) {
 }
 
 func handleMysteriesResultWS(w http.ResponseWriter, req *http.Request) {
+	url := req.URL
+	if url == nil {
+		writeErrorString(w, "url is nil")
+		return
+	}
+	query := url.Query()
+	if query == nil {
+		writeErrorString(w, "query is nil")
+		return
+	}
+
+	// Mystery Text
+	mysteryTextSlice, ok := query["mt"]
+	if !ok {
+		writeErrorString(w, "mt is not a key of query")
+		return
+	}
+	if len(mysteryTextSlice) == 0 {
+		writeErrorString(w, "len(mysteryTextSlice) == 0")
+		return
+	}
+	mysteryText := mysteryTextSlice[0]
+	if len(mysteryText) == 0 {
+		writeErrorString(w, "len(mysteryText) == 0")
+		return
+	}
+
+	// Mode
+	modeSlice, ok := query["mode"]
+	if !ok {
+		writeErrorString(w, "mode is not a key of query")
+		return
+	}
+	if len(modeSlice) == 0 {
+		writeErrorString(w, "len(modeSlice) == 0")
+		return
+	}
+	mode := modeSlice[0]
+	if mode != "1" && mode != "2" {
+		writeErrorString(w, "invalid mode")
+		return
+	}
+
+	// Partition Count
+	partitionCountSlice, ok := query["pc"]
+	if !ok {
+		writeErrorString(w, "pc is not a key of query")
+		return
+	}
+	if len(partitionCountSlice) == 0 {
+		writeErrorString(w, "len(partitionCountSlice) == 0")
+		return
+	}
+	partitionCount := partitionCountSlice[0]
+	if _, err := strconv.Atoi(partitionCount); err != nil {
+		writeError(w, err)
+		return
+	}
+
+	// Command
+	cmd := exec.Command("spark-submit", "--master", "yarn", "--py-files", "../app/dependencies.zip", "../app/m3.py", mysteryText, mode, partitionCount)
+
+	// Standard Output
+	stdout, err := cmd.StdoutPipe()
+	if err != nil {
+		writeError(w, err)
+		return
+	}
+
+	// Standard Error
+	stderr, err := cmd.StderrPipe()
+	if err != nil {
+		writeError(w, err)
+		return
+	}
+
+	// WebSocket Connection
+	conn, err := websocket.Upgrade(w, req, w.Header(), 1024, 1024)
+	if err != nil {
+		writeError(w, err)
+		return
+	}
+	defer conn.Close()
+
+	// WaitGroup
+	var wg sync.WaitGroup
+
+	// Goroutine for handling stdout
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		scanner := bufio.NewScanner(stdout)
+		scanner.Split(bufio.ScanLines)
+		for scanner.Scan() {
+			line := scanner.Text()
+			if err := conn.WriteJSON(map[string]string{"stream": "stdout", "message": line}); err != nil {
+				fmt.Println(err)
+				break
+			}
+		}
+	}()
+
+	// Goroutine for handling stderr
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		scanner := bufio.NewScanner(stderr)
+		scanner.Split(bufio.ScanLines)
+		for scanner.Scan() {
+			line := scanner.Text()
+			if err := conn.WriteJSON(map[string]string{"stream": "stderr", "message": line}); err != nil {
+				fmt.Println(err)
+				break
+			}
+		}
+	}()
+
+	if err := cmd.Start(); err != nil {
+		writeError(w, err)
+		return
+	}
+	// fmt.Println("cmd.Start() returned")
+
+	wg.Wait()
+	// fmt.Println("wg.Wait() returned")
+
+	cmd.Wait()
+	// fmt.Println("cmd.Wait() returned")
 }
