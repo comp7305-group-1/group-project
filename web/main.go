@@ -231,6 +231,7 @@ func handleMysteriesResult(w http.ResponseWriter, req *http.Request) {
 	w.Header().Set("Content-Type", "text/html;charset=UTF-8")
 	t.Execute(w, map[string]string{
 		"MysteryText":        mysteryText,
+		"Mode":               mode,
 		"IsUsedCachedResult": isUsedCachedResult,
 		"PartitionCount":     partitionCount,
 	})
