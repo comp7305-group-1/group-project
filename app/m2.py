@@ -58,8 +58,9 @@ def find_result(sc, user_input, min_partitions):
     processed_books = books.map(get_cleaned_sentence_from_zip_txt)  # [ [s1, s2,s3] [] [] ]
     # 2. Get match result from each book
     result = processed_books.map(check_each_book).filter(lambda x: x is not None)
-    print('=== Start Result ===============================================================\n')
-    print(result.collect())
+    collected = result.collect()
+    print('=== Start Result ===============================================================')
+    print(collected)
     print('=== End Result =================================================================\n')
     # 3. Save the result to hdfs for later usage
     path = get_result_path(user_input)
@@ -75,8 +76,9 @@ def find_result(sc, user_input, min_partitions):
 def load_result(sc, user_input):
     try:
         path = get_result_path(user_input)
-        print('=== Start Result ===============================================================\n')
-        print(sc.textFile(path).collect())
+        collected = sc.textFile(path).collect()
+        print('=== Start Result ===============================================================')
+        print(collected)
         print('=== End Result =================================================================\n')
     except:
         print('*** ERROR: Result does not exist in database ***')
@@ -86,7 +88,7 @@ if __name__ == '__main__':
     print('=== Start Mystery ==============================================================\n')
     conf = SparkConf().setAppName('UnravelMysteries').setMaster('yarn')
     sc = SparkContext(conf=conf)
-    sc.setLogLevel('ERROR')
+    sc.setLogLevel('INFO')
     user_input = str(sys.argv[1]).lower()
     mode = int(sys.argv[2])
     # default mode 1 = generate the result again, mode 2 = check exist
