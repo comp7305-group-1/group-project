@@ -32,9 +32,12 @@ def check(sentence):
         return ('')
 
 
-def get_cleaned_sentence_from_zip_txt(book):
-    sentences = nltk.tokenize.sent_tokenize(book[1].replace('\r\n', ' ').replace('\n', ' '))
-    return {'book_name': book[0], 'sentences': sentences}
+def get_cleaned_sentence_from_zip_txt(book): # book: tuple(unicode, unicode), book[0]: book_name, book[1]: book_content
+    book_name_string = book[0]
+    book_content_string = book[1]
+    book_content_in_one_line_string = book_content_string.replace('\r\n', ' ').replace('\n', ' ')
+    sentence_string_list = nltk.tokenize.sent_tokenize(book_content_in_one_line_string) # sentence_string_list = [ sentence1_string, sentence2_string, ... ]
+    return {'book_name': book_name_string, 'sentences': sentence_string_list}
 
 
 def check_each_book(processed_book):
@@ -55,7 +58,7 @@ def get_result_path(user_input):
 def find_result(sc, user_input, min_partitions):
     # 1. Get sentences from each book
     books = sc.wholeTextFiles('hdfs://gpu1:8020/books', minPartitions=min_partitions, use_unicode=True) # Error after setting use_unicode=False
-    processed_books = books.map(get_cleaned_sentence_from_zip_txt)  # [ [s1, s2,s3] [] [] ]
+    processed_books = books.map(get_cleaned_sentence_from_zip_txt)  # [ {b1: [s1, s2, s3]}, {}, {} ]
     # 2. Get match result from each book
     result = processed_books.map(check_each_book).filter(lambda x: x is not None)
     collected = result.collect()
