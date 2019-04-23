@@ -39,14 +39,14 @@ def split_content_into_sentences(book): # book: tuple(unicode, unicode) = (book_
     book_name = book[0].encode('ascii', 'ignore') # book_name: str
     book_content = book[1].encode('ascii', 'ignore') # book_content: str
     book_content_in_one_line = book_content.replace('\r\n', ' ').replace('\n', ' ') # book_content_in_one_line: str
-    sentence_list = nltk.tokenize.sent_tokenize(book_content_in_one_line) # sentence_list: list = [ sentence1, sentence2, ... ]
-    return (book_name, sentence_list)
+    list_of_sentences = nltk.tokenize.sent_tokenize(book_content_in_one_line) # list_of_sentences: list = [ sentence1, sentence2, ... ]
+    return (book_name, list_of_sentences)
 
 
-def check_each_book(user_input_lower, book_name_and_sentence_list):
+def check_each_book(user_input_lower, book_name_and_list_of_sentences):
     list_of_match = []
-    book_name = book_name_and_sentence_list[0]
-    sentences = book_name_and_sentence_list[1]
+    book_name = book_name_and_list_of_sentences[0]
+    sentences = book_name_and_list_of_sentences[1]
     for sentence in sentences:  # sentences = sentences list in a book
         if user_input_lower in initialism(sentence):
             list_of_match.append(sentence)
@@ -58,13 +58,41 @@ def get_result_path(user_input):
     return 'hdfs://gpu1:8020/results/%s' % user_input
 
 
-def find_result(sc, user_input, min_partitions):
+def find_result0(sc, user_input, min_partitions):
     user_input_lower = user_input.lower()
     # 1. Get sentences from each book
     books = sc.wholeTextFiles('hdfs://gpu1:8020/books', minPartitions=min_partitions, use_unicode=True) # books: RDD; Error after setting use_unicode=False
-    book_name_and_sentence_list = books.map(split_content_into_sentences)  # book_name_and_sentence_list: PipelinedRDD = [ (book_name, [sentence1, sentence2, ...]), (...), (...) ]
+    book_name_and_list_of_sentences = books.map(split_content_into_sentences)  # book_name_and_list_of_sentences: PipelinedRDD = [ (book_name, [sentence1, sentence2, ...]), (...), (...) ]
     # 2. Get match result from each book
-    result0 = book_name_and_sentence_list.map(lambda x: check_each_book(user_input_lower, x))
+    result0 = book_name_and_list_of_sentences.map(lambda x: check_each_book(user_input_lower, x))
+    result = result0.filter(lambda x: x is not None)
+    collected = result.collect()
+    print('=== Start Result ===============================================================')
+    print(collected)
+    print('=== End Result =================================================================\n')
+    # 3. Save the result to hdfs for later usage
+    #path = get_result_path(user_input)
+    #try:
+    #    # Save the result
+    #    result.saveAsTextFile(path)
+    #except:
+    #    # Remove the old result file
+    #    remove_existing_file(path)
+    #    result.saveAsTextFile(path)
+
+
+def find_result(sc, user_input, min_partitions):
+    user_input_lower = user_input.lower()
+    # 1. Get sentences from each book
+    books = sc.wholeTextFiles('hdfs://gpu1:8020/testbooks', minPartitions=min_partitions, use_unicode=True) # books: RDD; Error after setting use_unicode=False
+    book_name_and_list_of_sentences = books.map(split_content_into_sentences)  # book_name_and_list_of_sentences: PipelinedRDD = [ (book_name, [sentence1, sentence2, ...]), (...), (...) ]
+    # 2. Get match result from each book
+    list_of_book_name_and_sentence = book_name_and_list_of_sentences.flatMapValues(lambda x: x)
+
+    print list_of_book_name_and_sentence.collect()
+    list_of_book_name_and_sentence.xyz()
+
+    result0 = book_name_and_list_of_sentences.map(lambda x: check_each_book(user_input_lower, x))
     result = result0.filter(lambda x: x is not None)
     collected = result.collect()
     print('=== Start Result ===============================================================')
