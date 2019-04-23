@@ -16,10 +16,23 @@ def remove_existing_file(path):
 
 
 def initialism(sentence):
-    return ''.join([ word[0] for word in sentence.split() ]).lower()
+    words = sentence.split()
+    initialism = []
+    for word in words:
+        initialism.append(word[0])
+    return ''.join(initialism).lower()
 
 
-def get_cleaned_sentence_from_zip_txt(book): # book: tuple(unicode, unicode), book[0]: book_name, book[1]: book_content
+def check(sentence):
+    print('check\n')
+    if user_input.lower() in initialism(sentence):
+        print('Possible mystery found: \n%s' % (sentence))
+        return (sentence)
+    else:
+        return ('')
+
+
+def get_cleaned_sentence_from_zip_txt(book):
     sentences = nltk.tokenize.sent_tokenize(book[1].replace('\r\n', ' ').replace('\n', ' '))
     return {'book_name': book[0], 'sentences': sentences}
 
@@ -41,8 +54,8 @@ def get_result_path(user_input):
 
 def find_result(sc, user_input, min_partitions):
     # 1. Get sentences from each book
-    books = sc.wholeTextFiles('hdfs://gpu1:8020/books', minPartitions=min_partitions, use_unicode=True) # books: RDD; Error after setting use_unicode=False
-    processed_books = books.map(get_cleaned_sentence_from_zip_txt) # processed_books: PipelinedRDD; [ (b1, [s1, s2, s3]), (), () ]
+    books = sc.wholeTextFiles('hdfs://gpu1:8020/books', minPartitions=min_partitions, use_unicode=True) # Error after setting use_unicode=False
+    processed_books = books.map(get_cleaned_sentence_from_zip_txt)  # [ [s1, s2,s3] [] [] ]
     # 2. Get match result from each book
     result = processed_books.map(check_each_book).filter(lambda x: x is not None)
     collected = result.collect()
