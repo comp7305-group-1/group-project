@@ -40,7 +40,7 @@ def split_content_into_sentences(book): # book: tuple(unicode, unicode) = (book_
     book_content = book[1].encode('ascii', 'ignore') # book_content: str
     book_content_in_one_line = book_content.replace('\r\n', ' ').replace('\n', ' ') # book_content_in_one_line: str
     list_of_sentences = nltk.tokenize.sent_tokenize(book_content_in_one_line) # list_of_sentences: list = [ sentence1, sentence2, ... ]
-    return (book_name, list_of_sentences)
+    return [ (book_name, sentence) for sentence in list_of_sentences ]
 
 
 def check_each_book(user_input_lower, book_name_and_list_of_sentences):
@@ -82,19 +82,17 @@ def find_result0(sc, user_input, min_partitions):
 
 
 def find_result(sc, user_input, min_partitions):
-    user_input_lower = user_input.lower()
     # 1. Get sentences from each book
     books = sc.wholeTextFiles('hdfs://gpu1:8020/testbooks', minPartitions=min_partitions, use_unicode=True) # books: RDD; Error after setting use_unicode=False
-    book_name_and_list_of_sentences = books.map(split_content_into_sentences)  # book_name_and_list_of_sentences: PipelinedRDD = [ (book_name, [sentence1, sentence2, ...]), (...), (...) ]
+    #book_name_and_list_of_sentences = books.map(split_content_into_sentences)  # book_name_and_list_of_sentences: PipelinedRDD = [ (book_name_1, [sentence1, sentence2, ...]), (book_name_2, [...]), ... ]
     # 2. Get match result from each book
-    list_of_book_name_and_sentence = book_name_and_list_of_sentences.flatMapValues(lambda x: x)
-
-    print list_of_book_name_and_sentence.collect()
-    list_of_book_name_and_sentence.xyz()
-
-    result0 = book_name_and_list_of_sentences.map(lambda x: check_each_book(user_input_lower, x))
-    result = result0.filter(lambda x: x is not None)
-    collected = result.collect()
+    #list_of_book_name_and_sentence = book_name_and_list_of_sentences.flatMapValues(lambda x: x) # list_of_book_name_and_sentence: PipelinedRDD = [ (book_name_1, sentence1), (book_name_1, sentence2), (...), (book_name_2, ...), ...]
+    #list_of_book_name_and_sentence_and_initialism = list_of_book_name_and_sentence.map(lambda x: (x[0], x[1], initialism(x[1]))) 
+    list_of_book_name_and_sentence = books.flatMap(split_content_into_sentences) # list_of_book_name_and_sentence: PipelinedRDD = [ (book_name_1, sentence1), (book_name_1, sentence2), (...), (book_name_2, ...), ...]
+    #result0 = book_name_and_list_of_sentences.map(lambda x: check_each_book(user_input_lower, x))
+    user_input_lower = user_input.lower()
+    result = list_of_book_name_and_sentence.filter(lambda x: initialism(x[1]) == user_input_lower)
+    collected = result.groupByKey().mapValues(list).collect()
     print('=== Start Result ===============================================================')
     print(collected)
     print('=== End Result =================================================================\n')
