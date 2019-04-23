@@ -15,23 +15,8 @@ def remove_existing_file(path):
     fs.delete(Path(path))
 
 
-#def initialism(sentence):
-#    words = sentence.split()
-#    initialism = []
-#    for word in words:
-#        initialism.append(word[0])
-#    return ''.join(initialism).lower()
-
 def initialism(sentence):
-    return ''.join([ x[0] for x in sentence ]).lower()
-
-def check(sentence):
-    print('check\n')
-    if user_input.lower() in initialism(sentence):
-        print('Possible mystery found: \n%s' % (sentence))
-        return (sentence)
-    else:
-        return ('')
+    return ''.join([ word[0] for word in sentence.split() ]).lower()
 
 
 def split_content_into_sentences(book): # book: tuple(unicode, unicode), book[0]: book_name, book[1]: book_content
