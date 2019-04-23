@@ -15,22 +15,38 @@ def remove_existing_file(path):
     fs.delete(Path(path))
 
 
-def initialism(sentence):
+def initialism(sentence): # sentence: str
+    '''
+    Extracts the first letter of each of the words in the sentence,
+    concatenates them into a string, and turns it into lowercase.
+    For instance, if sentence is 'I go to school by bus', then 'igtsbb' is
+    returned. If sentence is 'Cloud Computing is so fun!', then 'ccisf' is
+    returned.
+    '''
     return ''.join([ word[0] for word in sentence.split() ]).lower()
 
 
-def split_content_into_sentences(book): # book: tuple(unicode, unicode), book[0]: book_name, book[1]: book_content
-    book_name_string = book[0].encode('ascii', 'ignore') # book_name_string: str
-    book_content_string = book[1].encode('ascii', 'ignore') # book_content_string: str
-    book_content_in_one_line_string = book_content_string.replace('\r\n', ' ').replace('\n', ' ')
-    sentence_string_list = nltk.tokenize.sent_tokenize(book_content_in_one_line_string) # sentence_string_list = [ sentence1_string, sentence2_string, ... ]
-    return (book_name_string, sentence_string_list)
+def split_content_into_sentences(book): # book: tuple(unicode, unicode) = (book_name, book_content)
+    '''
+    Splits the content of the book into sentences. The content is converted
+    into ASCII and unconvertible characters are ignored. The parameter is a
+    2-element tuple. The first element is the unique name of the book (in
+    Unicode). The second element is the content of the book (in Unicode). The
+    returned value is a 2-element tuple. The first element is the unique name
+    of the book (in ASCII). The second element is a list of sentences from the
+    content of the book (in ASCII).
+    '''
+    book_name = book[0].encode('ascii', 'ignore') # book_name: str
+    book_content = book[1].encode('ascii', 'ignore') # book_content: str
+    book_content_in_one_line = book_content.replace('\r\n', ' ').replace('\n', ' ') # book_content_in_one_line: str
+    sentence_list = nltk.tokenize.sent_tokenize(book_content_in_one_line) # sentence_list: list = [ sentence1, sentence2, ... ]
+    return (book_name, sentence_list)
 
 
-def check_each_book(user_input_lower, processed_book):
+def check_each_book(user_input_lower, book_name_and_sentence_list):
     list_of_match = []
-    book_name = processed_book[0]
-    sentences = processed_book[1]
+    book_name = book_name_and_sentence_list[0]
+    sentences = book_name_and_sentence_list[1]
     for sentence in sentences:  # sentences = sentences list in a book
         if user_input_lower in initialism(sentence):
             list_of_match.append(sentence)
@@ -43,12 +59,12 @@ def get_result_path(user_input):
 
 
 def find_result(sc, user_input, min_partitions):
+    user_input_lower = user_input.lower()
     # 1. Get sentences from each book
     books = sc.wholeTextFiles('hdfs://gpu1:8020/books', minPartitions=min_partitions, use_unicode=True) # books: RDD; Error after setting use_unicode=False
-    book_name_and_sentences = books.map(split_content_into_sentences)  # book_name_and_sentences: PipelinedRDD; [ (b1, [s1, s2, s3]), (), () ]
+    book_name_and_sentence_list = books.map(split_content_into_sentences)  # book_name_and_sentence_list: PipelinedRDD = [ (book_name, [sentence1, sentence2, ...]), (...), (...) ]
     # 2. Get match result from each book
-    user_input_lower = user_input.lower()
-    result0 = book_name_and_sentences.map(lambda x: check_each_book(user_input_lower, x))
+    result0 = book_name_and_sentence_list.map(lambda x: check_each_book(user_input_lower, x))
     result = result0.filter(lambda x: x is not None)
     collected = result.collect()
     print('=== Start Result ===============================================================')
