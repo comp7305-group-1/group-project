@@ -23,13 +23,13 @@ def initialism(sentence):
     return ''.join(initialism).lower()
 
 
-def check(sentence):
-    print('check\n')
-    if user_input.lower() in initialism(sentence):
-        print('Possible mystery found: \n%s' % (sentence))
-        return (sentence)
-    else:
-        return ('')
+# def check(sentence):
+#     print('check\n')
+#     if user_input.lower() in initialism(sentence):
+#         print('Possible mystery found: \n%s' % (sentence))
+#         return (sentence)
+#     else:
+#         return ('')
 
 
 def get_cleaned_sentence_from_zip_txt(book):
