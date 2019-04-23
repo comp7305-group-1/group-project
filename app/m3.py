@@ -16,20 +16,7 @@ def remove_existing_file(path):
 
 
 def initialism(sentence):
-    words = sentence.split()
-    initialism = []
-    for word in words:
-        initialism.append(word[0])
-    return ''.join(initialism).lower()
-
-
-# def check(sentence):
-#     print('check\n')
-#     if user_input.lower() in initialism(sentence):
-#         print('Possible mystery found: \n%s' % (sentence))
-#         return (sentence)
-#     else:
-#         return ('')
+    return ''.join([ x[0] for x in sentence ]).lower()
 
 
 def get_cleaned_sentence_from_zip_txt(book):
