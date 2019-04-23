@@ -51,13 +51,13 @@ def get_result_path(mystery_text):
     return 'hdfs://gpu1:8020/results/%s' % mystery_text
 
 
-def find_result(sc, mystery_text, bookspath='hdfs://gpu1:8020/books', min_partitions=8, preserves_partitioning=True, num_partitions=None):
+def find_result(sc, mystery_text, books_path='hdfs://gpu1:8020/books', min_partitions=8, preserves_partitioning=True, num_partitions=None):
     '''
     Find the mystery text from the books.
     '''
     # books: RDD = [ (book_name_a, book_content_a), (book_name_b, book_content_b), ... ]
     # Returns error if use_unicode is set to False
-    books = sc.wholeTextFiles(bookspath, minPartitions=min_partitions, use_unicode=True)
+    books = sc.wholeTextFiles(books_path, minPartitions=min_partitions, use_unicode=True)
     # list_of_book_name_and_sentence: PipelinedRDD = [ (book_name_a, sentence_a_1), (book_name_a, sentence_a_2), (...), (book_name_b, ...), ... ]
     list_of_book_name_and_sentence = books.flatMap(split_content_into_sentences, preservesPartitioning=preserves_partitioning)
     filtered_list_of_book_name_and_sentence = list_of_book_name_and_sentence.filter(lambda x: mystery_text in initialism(x[1]))
@@ -108,7 +108,7 @@ if __name__ == '__main__':
     # mode 2 = load result from saved result
     mode = int(sys.argv[1])
     if mode == 0 or mode == 1:
-        bookspath = sys.argv[2]
+        books_path = sys.argv[2]
         mystery_text = str(sys.argv[3]).lower()
         min_partitions = int(sys.argv[4])
         preserves_partitioning = True
@@ -117,7 +117,7 @@ if __name__ == '__main__':
         num_partitions = int(sys.argv[6])
         if num_partitions == 0:
             num_partitions = None 
-        result = find_result(sc, mystery_text, bookspath, min_partitions, preserves_partitioning, num_partitions)
+        result = find_result(sc, mystery_text, books_path, min_partitions, preserves_partitioning, num_partitions)
         if mode == 1:
             save_result(result, mystery_text)
     elif mode == 2:
