@@ -114,7 +114,9 @@ if __name__ == '__main__':
         preserves_partitioning = True
         if int(sys.argv[5]) == 0:
             preserves_partitioning = False
-        num_partitions=int(sys.argv[6])
+        num_partitions = int(sys.argv[6])
+        if num_partitions == 0:
+            num_partitions = None 
         result = find_result(sc, mystery_text, bookspath, min_partitions, preserves_partitioning, num_partitions)
         if mode == 1:
             save_result(result, mystery_text)
