@@ -99,10 +99,6 @@ def load_result(sc, mystery_text):
 
 
 if __name__ == '__main__':
-    print('=== Begin Mystery ==============================================================')
-    conf = SparkConf().setAppName('UnravelMysteries').setMaster('yarn')
-    sc = SparkContext(conf=conf)
-    sc.setLogLevel('INFO')
     # mode 0 = generate the result from scratch
     # mode 1 = generate the result from scratch + save result
     # mode 2 = load result from saved result
@@ -117,12 +113,25 @@ if __name__ == '__main__':
         num_partitions = int(sys.argv[6])
         if num_partitions == 0:
             num_partitions = None 
-        result = find_result(sc, mystery_text, books_path, min_partitions, preserves_partitioning, num_partitions)
-        if mode == 1:
-            save_result(result, mystery_text)
+        is_find = True
+        if mode == 0:
+            is_save = False
+        else:
+            is_save = True
     elif mode == 2:
         mystery_text = str(sys.argv[2]).lower()
-        load_result(sc, mystery_text)
+        is_find = False
     else:
         print('*** ERROR: Invalid mode ***')
+    # Begin to do real stuff
+    print('=== Begin Mystery ==============================================================')
+    conf = SparkConf().setAppName('UnravelMysteries').setMaster('yarn')
+    sc = SparkContext(conf=conf)
+    sc.setLogLevel('INFO')
+    if is_find:
+        result = find_result(sc, mystery_text, books_path, min_partitions, preserves_partitioning, num_partitions)
+        if is_save:
+            save_result(result, mystery_text)
+    else:
+        load_result(sc, mystery_text)
     print('=== End Mystery ================================================================\n')
