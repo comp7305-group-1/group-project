@@ -27,6 +27,7 @@ def get_cleaned_sentence_from_zip_txt(book):
 ter=yarn --py-files ../application/dependencies.zip s.py tpgeo
 # 2. cp a new txt to /home/hduser/tmp in this case
 # 3. New results will be shown on the console
+# Remarks, input sentences should not contain \n if they are in 1 sentences, otherwise spark will stream line by line which may cause wrong result.
 """
 
 # Create a local StreamingContext with two working thread and batch interval of 10 second
