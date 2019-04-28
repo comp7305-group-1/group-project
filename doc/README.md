@@ -9,19 +9,20 @@
     - [The ISO Image of the Books](#the-iso-image-of-the-books)
   - [Installing](#installing)
     - [Natural Language Toolkit (NLTK)](#natural-language-toolkit-nltk)
+    - [PySpark Dependencies](#pyspark-dependencies)
     - [Golang](#golang)
     - [Gorilla WebSocket](#gorilla-websocket)
     - [Our Project](#our-project)
     - [The ISO Image of the Books](#the-iso-image-of-the-books-1)
+    - [The HAR Archive from the Books](#the-har-archive-from-the-books)
   - [Running](#running)
     - [Data Cleaning](#data-cleaning)
     - [Main Program](#main-program)
     - [Streaming Version of Main Program](#streaming-version-of-main-program)
     - [Web Interface](#web-interface)
-- File Listings
+- [File Listings](#file-listings)
 
 # Downloading, Installing, and Running Our Product
-
 
 ## Downloading
 
@@ -48,6 +49,7 @@ wget ftp://mirrors.pglaf.org/mirrors/gutenberg-iso/pgdvd042010.iso
 ```
 
 
+
 ## Installing
 
 The main program was written in Python, and it depends on the PySpark component and the Natural Language Toolkit (NLTK) library.
@@ -61,6 +63,7 @@ Please type the following command to install the library NLTK.
 ```sh
 sudo pip install -U nltk
 ```
+
 Punkt Sentence Tokenizer divides a text into a list of sentences by using an unsupervised algorithm to build a model for abbreviation words, collocations, and words that start sentences. 
 
 To download "punkt" tokenizer, run the following command in your python shell.
@@ -121,6 +124,13 @@ As `sudo` user (i.e. `student`):
 ```sh
 sudo umount mountpoint
 ```
+
+### The HAR Archive from the Books
+
+Please run the data cleaning step once (see below) before running this step.
+
+***TODO: Ewen, please add this!***
+
 
 
 ## Running
@@ -220,3 +230,9 @@ Please kill both `7729` and `7765` in this case:
 ```sh
 kill 7729 7765
 ```
+
+
+
+
+
+# File Listings
