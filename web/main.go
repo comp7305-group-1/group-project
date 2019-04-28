@@ -20,12 +20,17 @@ import (
 func main() {
 	rand.Seed(time.Now().UnixNano())
 	http.HandleFunc("/", handleIndex)
+
 	http.HandleFunc("/SparkPi", handleSparkPi)
 	http.HandleFunc("/SparkPiResult", handleSparkPiResult)
 	http.HandleFunc("/SparkPiResultWS", handleSparkPiResultWS)
+
 	http.HandleFunc("/Mysteries", handleMysteries)
 	http.HandleFunc("/MysteriesResult", handleMysteriesResult)
 	http.HandleFunc("/MysteriesResultWS", handleMysteriesResultWS)
+
+	http.HandleFunc("/MysteriesStream", handleMysteriesStream)
+
 	log.Fatal(http.ListenAndServe(":12345", nil))
 }
 
@@ -276,7 +281,7 @@ func handleMysteriesResultWS(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 	mode := modeSlice[0]
-	if mode != "1" && mode != "2" {
+	if mode != "0" && mode != "1" && mode != "2" {
 		writeErrorString(w, "invalid mode")
 		return
 	}
@@ -298,7 +303,13 @@ func handleMysteriesResultWS(w http.ResponseWriter, req *http.Request) {
 	}
 
 	// Command
-	cmd := exec.Command("spark-submit", "--master", "yarn", "--py-files", "../app/dependencies.zip", "../app/m3.py", mysteryText, mode, partitionCount)
+	var cmd *exec.Cmd
+	switch mode {
+	case "0", "1":
+		cmd = exec.Command("spark-submit", "--master", "yarn", "--py-files", "../app/dependencies.zip", "../app/m4.py", mode, "hdfs://gpu1:8020/books", mysteryText, partitionCount, "1", "0")
+	case "2":
+		cmd = exec.Command("spark-submit", "--master", "yarn", "--py-files", "../app/dependencies.zip", "../app/m4.py", mode, mysteryText)
+	}
 
 	// Standard Output
 	stdout, err := cmd.StdoutPipe()
@@ -366,4 +377,7 @@ func handleMysteriesResultWS(w http.ResponseWriter, req *http.Request) {
 
 	cmd.Wait()
 	// fmt.Println("cmd.Wait() returned")
+}
+
+func handleMysteriesStream(w http.ResponseWriter, req *http.Request) {
 }
