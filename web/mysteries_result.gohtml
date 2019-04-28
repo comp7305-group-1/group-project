@@ -102,20 +102,20 @@ document.addEventListener("DOMContentLoaded", ready);
       <td>{{.IsUsedCachedResult}}</td>
     </tr>
     <tr>
-      <th align="left">Executor Count (<tt>--num-executors</tt>):</th>
-      <td>{{.NumExecutors}}</td>
+      <th align="left">Executor Count:</th>
+      <td>{{.NumExecutors}} (The <tt>--num-executors</tt> option in <tt>spark-submit</tt>)</td>
     </tr>
     <tr>
-      <th align="left">Executor Cores (<tt>--executor-cores</tt>):</th>
-      <td>{{.ExecutorCores}}</td>
+      <th align="left">Executor Cores:</th>
+      <td>{{.ExecutorCores}} (The <tt>--executor-cores</tt> option in <tt>spark-submit</tt>)</td>
     </tr>
     <tr>
-      <th align="left">Driver Memory (<tt>--driver-memory</tt>):</th>
-      <td>{{.DriverMemory}}</td>
+      <th align="left">Driver Memory:</th>
+      <td>{{.DriverMemory}} (The <tt>--driver-memory</tt> option in <tt>spark-submit</tt>)</td>
     </tr>
     <tr>
-      <th align="left">Partition Count (<tt>minPartitions</tt>):</th>
-      <td>{{.MinPartitions}}</td>
+      <th align="left">Partition Count:</th>
+      <td>{{.MinPartitions}} (The <tt>minPartitions</tt> parameter in <tt>wholeTextFiles()</tt>)</td>
     </tr>
     <tr>
       <th align="left">Books Path:</th>
