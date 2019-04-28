@@ -18,7 +18,7 @@
     - [Main Program](#main-program)
     - [Streaming Version of Main Program](#streaming-version-of-main-program)
     - [Web Interface](#web-interface)
-
+- File Listings
 
 # Downloading, Installing, and Running Our Product
 
@@ -55,6 +55,10 @@ The main program was written in Python, and it depends on the PySpark component 
 The web interface was written in Golang, and it depends on Gorilla WebSocket library.
 
 ### Natural Language Toolkit (NLTK)
+
+***TODO: Nelson, please add this!***
+
+### PySpark Dependencies
 
 ***TODO: Nelson, please add this!***
 
@@ -127,10 +131,21 @@ To run the main program from the command line, please change the current directo
 
 ```sh
 cd $GOPATH/src/github.com/comp7305-group-1/group-project/app/
-spark-submit --master yarn m4.py
+spark-submit --master yarn m4.py <mode> <books_path> <mystery_text> \
+    <min_partitions> <preserves_partitioning> <num_partitions>
 ```
 
-***TODO: Params***
+#### Parameters
+
+| Parameter | Description |
+| --- | --- |
+| `mode` | `0`: Find the result without reading the cache. Do not save the result to the cache.<br>`1`: Find the result without reading the cache. Save the result to the cache.<br>`2`: Do not find the result. Load the result from the cache. |
+| `books_path` | The path to the books. You may fill in `har:///har/booksarchive.har` for the HAR version of the book archive, or `hdfs://gpu1:8020/books` for the normal HDFS version of the books. |
+| `mystery_text` | The mystery text (initialism) to be searched from the books. |
+| `min_partitions` | The `MinPartitions` parameter when calling `sc.wholeTextFiles()`. This has significant effect on the number of partitions created from the source text files. |
+| `preserves_partitioning` | The `preservesPartitioning` parameter when calling `books.flatMap()`. This has just little effect on the efficiency, perhaps because Spark already preserves partitioning in our case, without explicitly specified. |
+| `num_partitions` | The `numPartitions` parameter when calling `filtered_list_of_book_name_and_sentence.groupByKey()`. If this values is `0`, then the default is used (as if `None` is passed to the function). |
+
 
 ### Streaming Version of Main Program
 
@@ -141,7 +156,12 @@ cd $GOPATH/src/github.com/comp7305-group-1/group-project/app/
 spark-submit --master yarn stream2.py 
 ```
 
-***TODO: Params***
+| Parameter | Description |
+| --- | --- |
+| `books_path` | The path to the books. Please create this directory and leave it empty when starting the program. After starting, you may copy files to this directory. The program will monitor this directory and run the search on-the-fly. |
+| `mystery_text` | The mystery text (initialism) to be searched from the books. |
+| `batch_duration` | The interval (in seconds) between successive scans. For example, if this value is `1`, then the program checks whether a new file is copied to `books_path` every second. A value of `8` is recommended. |
+| `preserves_partitioning` | The `preservesPartitioning` parameter when calling `books.flatMap()`. This has just little effect on the efficiency, perhaps because Spark already preserves partitioning in our case, without explicitly specified. |
 
 ### Web Interface
 
@@ -151,7 +171,7 @@ To run the streaming version of main program from the command line, please chang
 go run main.go
 ```
 
-To use the web interface, please visit port `12345` of the server.
+To use the web interface, please visit port `12345` of the server via `http`.
 
 To stop the web server, please kill the process by pressing `Ctrl-C`.
 
