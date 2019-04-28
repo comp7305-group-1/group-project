@@ -18,6 +18,7 @@ function ready() {
 
 function onStopClicked(event) {
   event.preventDefault();
+  socket.close();
 }
 
 function onStartClicked(event) {
@@ -68,27 +69,37 @@ function onStartClicked(event) {
 }
 
 function showStatus() {
+  var start = document.getElementById('start');
+  var stop = document.getElementById('stop');
   var status0 = document.getElementById('status0');
   var status1 = document.getElementById('status1');
   var status2 = document.getElementById('status2');
   var status3 = document.getElementById('status3');
 
   if (status == 0) {
+    start.classList.remove('hidden');
+    stop.classList.add('hidden');
     status0.classList.remove('hidden');
     status1.classList.add('hidden');
     status2.classList.add('hidden');
     status3.classList.add('hidden');
   } else if (status == 1) {
+    start.classList.add('hidden');
+    stop.classList.stop('hidden');
     status0.classList.add('hidden');
     status1.classList.remove('hidden');
     status2.classList.add('hidden');
     status3.classList.add('hidden');
   } else if (status == 2) {
+    start.classList.remove('hidden');
+    stop.classList.add('hidden');
     status0.classList.add('hidden');
     status1.classList.add('hidden');
     status2.classList.remove('hidden');
     status3.classList.add('hidden');
   } else if (status == 3) {
+    start.classList.remove('hidden');
+    stop.classList.add('hidden');
     status0.classList.add('hidden');
     status1.classList.add('hidden');
     status2.classList.add('hidden');
@@ -127,7 +138,7 @@ document.addEventListener("DOMContentLoaded", ready);
       </tr>
       <tr>
         <td colspan="2">
-          <button id="start">Start</button><button id="stop" class="hidden">Stop</button>
+          <button id="start" class="hidden">Start</button><button id="stop" class="hidden">Stop</button>
         </td>
       </tr>
     </table><br>
