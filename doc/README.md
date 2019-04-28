@@ -132,7 +132,7 @@ Please run the data cleaning step once (see below) before running this step.
 To create the Hadoop Archive Format for grouping the small ebooks files, the following command should be used:
 
 ```$ hadoop archive -archiveName booksarchive.har -p /books /har
-
+```
 where the source ebooks files are placed under `hdfs://books/` 
 and the archive created will be stored as `hdfs://har/booksarchive.har`
 
