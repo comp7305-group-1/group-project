@@ -74,7 +74,6 @@ nltk.download('punkt')
 
 ### PySpark Dependencies
 
-```
 To run the project with the required dependency, you need to create a file named `requirements.txt` in the same directory of the python program.
 Add below package into `requirements.txt` and save.
 ```sh
