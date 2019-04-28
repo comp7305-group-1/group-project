@@ -4,19 +4,42 @@
   <meta charset="utf-8">
   <title>COMP7305 Group 01 - Unravel the Mysteries by Spark (Streaming Version)</title>
   <script type="text/javascript" language="javascript">
+var socket;
+var status;
+
 function ready() {
-  var wsUri = 'ws://' + location.host + '/MysteriesResultWS?mt={{.MysteryText}}&mode={{.Mode}}&pc={{.PartitionCount}}';
-  var stdout;
-  var stderr;
-  var socket;
+  var start = document.getElementById('start');
+  var stop = document.getElementById('stop');
+  start.onclick = onStartClicked;
+  stop.onclick = onStopClicked;
+  status = 0;
+  showStatus();
+}
 
-  stdout = document.getElementById('stdout');
-  stderr = document.getElementById('stderr');
+function onStopClicked(event) {
+  event.preventDefault();
+}
 
-  socket = new WebSocket(wsUri);
+function onStartClicked(event) {
+  event.preventDefault();
+
+  var mt = document.getElementById('mt');
+  var bp = document.getElementById('bp');
+  var bd = document.getElementById('bd');
+
+  var stdout = document.getElementById('stdout');
+  var stderr = document.getElementById('stderr');
+
+  var wsUri = new URL('ws://' + location.host + '/MysteriesStreamWS');
+  wsUri.searchParams.set('mt', mt.value);
+  wsUri.searchParams.set('bp', bp.value);
+  wsUri.searchParams.set('bd', bd.value);
+
+  socket = new WebSocket(wsUri.href);
   socket.onopen = function(event) {
     console.log("socket.onopen");
-    showRunning();
+    status = 1;
+    showStatus();
   };
   socket.onmessage = function(event) {
     // console.log(event.data);
@@ -32,29 +55,48 @@ function ready() {
   };
   socket.onclose = function(event) {
     console.log("socket.onclose");
-    showCompleted();
+    if (status === 1) {
+      ststus = 2;
+    }
+    showStatus();
   };
   socket.onerror = function(event) {
     console.log('socket.onerror');
+    status = 3;
+    showStatus();
   };
 }
 
-function showRunning() {
+function showStatus() {
   var status0 = document.getElementById('status0');
   var status1 = document.getElementById('status1');
   var status2 = document.getElementById('status2');
+  var status3 = document.getElementById('status3');
 
-  status0.classList.add('hidden');
-  status1.classList.remove('hidden');
-}
-
-function showCompleted() {
-  var status0 = document.getElementById('status0');
-  var status1 = document.getElementById('status1');
-  var status2 = document.getElementById('status2');
-
-  status1.classList.add('hidden');
-  status2.classList.remove('hidden');
+  if (status == 0) {
+    status0.classList.remove('hidden');
+    status1.classList.add('hidden');
+    status2.classList.add('hidden');
+    status3.classList.add('hidden');
+  } else if (status == 1) {
+    status0.classList.add('hidden');
+    status1.classList.remove('hidden');
+    status2.classList.add('hidden');
+    status3.classList.add('hidden');
+  } else if (status == 2) {
+    status0.classList.add('hidden');
+    status1.classList.add('hidden');
+    status2.classList.remove('hidden');
+    status3.classList.add('hidden');
+  } else if (status == 3) {
+    status0.classList.add('hidden');
+    status1.classList.add('hidden');
+    status2.classList.add('hidden');
+    status3.classList.remove('hidden');
+  } else {
+    console.log('else');
+    console.log(status);
+  }
 }
   </script>
   <style type="text/css">
@@ -66,7 +108,7 @@ function showCompleted() {
 </head>
 <body>
   <script type="text/javascript" language="javascript">
-//document.addEventListener("DOMContentLoaded", ready);
+document.addEventListener("DOMContentLoaded", ready);
   </script>
   <h1>COMP7305 Group 01 - Unravel the Mysteries by Spark (Streaming Version)</h1>
   <form>
@@ -85,7 +127,7 @@ function showCompleted() {
       </tr>
       <tr>
         <td colspan="2">
-          <button>Start</button><button class="hidden">Stop</button>
+          <button id="start">Start</button><button id="stop" class="hidden">Stop</button>
         </td>
       </tr>
     </table><br>
@@ -95,9 +137,10 @@ function showCompleted() {
     <tr>
       <th align="left">Status:</th>
       <td>
-        <span id="status0" class="green">Waiting</span>
+        <span id="status0" class="green hidden">Waiting</span>
         <span id="status1" class="red hidden">Running</span>
         <span id="status2" class="blue hidden">Completed</span>
+        <span id="status3" class="red hidden">Error</span>
       </td>
     </tr>
   </table><br>
