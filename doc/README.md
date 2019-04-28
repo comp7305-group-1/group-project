@@ -56,7 +56,18 @@ The web interface was written in Golang, and it depends on Gorilla WebSocket lib
 
 ### Natural Language Toolkit (NLTK)
 
-***TODO: Nelson, please add this!***
+Please type the following command to install the library NLTK.
+
+```sh
+sudo pip install -U nltk
+```
+Punkt Sentence Tokenizer divides a text into a list of sentences by using an unsupervised algorithm to build a model for abbreviation words, collocations, and words that start sentences. 
+
+To download "punkt" tokenizer, run the following command in your python shell.
+```sh
+import nltk
+nltk.download('punkt')
+```
 
 ### PySpark Dependencies
 
@@ -124,6 +135,12 @@ spark-submit --master yarn clean.py <hadoopMasterIP> <hadoopMasterName> <sparkMa
 ```
 
 ***TODO: Pauline, please add the descriptions of the parameters!***
+
+To create the Hadoop Archive Format for grouping the small ebooks files, the following command was used:
+
+$ hadoop archive -archiveName booksarchive.har -p /books /har
+
+where the source files to be put in the archive should be placed under hdfs://books/ and the archive to be stored under hdfs://har/booksarchive.har
 
 ### Main Program
 
