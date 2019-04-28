@@ -166,7 +166,7 @@ cd $GOPATH/src/github.com/comp7305-group-1/group-project/cleaning/
 spark-submit --master yarn clean.py <hadoopMasterIP> <hadoopMasterName> <sparkMasterURL>
 ```
 
-***TODO: Pauline, please add the descriptions of the parameters!***
+The parameters represent the IP address of masternode of Hadoop, username of Hadoop cluster, and the management address of spark address sequentially.
 
 ### Main Program
 
