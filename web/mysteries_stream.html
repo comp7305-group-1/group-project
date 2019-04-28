@@ -55,8 +55,8 @@ function onStartClicked(event) {
   };
   socket.onclose = function(event) {
     console.log("socket.onclose");
-    if (status === 1) {
-      ststus = 2;
+    if (status == 1) {
+      status = 2;
     }
     showStatus();
   };
