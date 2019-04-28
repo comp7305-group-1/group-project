@@ -20,9 +20,31 @@
           <input type="radio" id="mode2" name="mode" value="2"><label for="mode2">Yes (load the result from cache)</label>
         </td>
       </tr>
+    </table><br>
+    <b>Advanced Parameters</b><br>
+    <table>
       <tr>
-        <td><label for="pc">Partition Count:</label></td>
-        <td><input type="text" id="pc" name="pc" value="100"></td>
+        <td><label for="ne">Executor Count (<tt>--num-executors</tt>):</label></td>
+        <td valign="top"><input type="text" id="ne" name="ne" value="16"></td>
+      </tr>
+      <tr>
+        <td><label for="ec">Executor Cores (<tt>--executor-cores</tt>):</label></td>
+        <td valign="top"><input type="text" id="ec" name="ec" value="2"></td>
+      </tr>
+      <tr>
+        <td><label for="dm">Driver Memory (<tt>--driver-memory</tt>):</label></td>
+        <td valign="top"><input type="text" id="dm" name="dm" value="512m"></td>
+      </tr>
+      <tr>
+        <td><label for="mp">Partition Count (<tt>minPartitions</tt>):</label></td>
+        <td valign="top"><input type="text" id="mp" name="mp" value="128"></td>
+      </tr>
+      <tr>
+        <td valign="top"><label>Books Path:</label></td>
+        <td>
+          <input type="radio" id="bp0" name="bp" value="0" checked="checked"><label for="bp0"><tt>har:///har/booksarchive.har</tt></label><br>
+          <input type="radio" id="bp1" name="dp" value="1"><label for="bp1"><tt>hdfs://gpu1:8020/books</tt></label><br>
+        </td>
       </tr>
       <tr>
         <td colspan="2">

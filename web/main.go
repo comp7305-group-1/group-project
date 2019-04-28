@@ -17,6 +17,8 @@ import (
 	"github.com/gorilla/websocket"
 )
 
+// Main
+
 func main() {
 	rand.Seed(time.Now().UnixNano())
 	http.HandleFunc("/", handleIndex)
@@ -33,6 +35,8 @@ func main() {
 
 	log.Fatal(http.ListenAndServe(":12345", nil))
 }
+
+// Utility Functions
 
 func writeError(w http.ResponseWriter, err error) {
 	log.Println(err)
@@ -65,9 +69,13 @@ func writeFile(w http.ResponseWriter, filename string) {
 	w.Write(bytes)
 }
 
+// Index Page
+
 func handleIndex(w http.ResponseWriter, req *http.Request) {
 	writeFile(w, "index.html")
 }
+
+// SparkPi
 
 func handleSparkPi(w http.ResponseWriter, req *http.Request) {
 	writeFile(w, "spark_pi.html")
@@ -194,6 +202,8 @@ func handleSparkPiResultWS(w http.ResponseWriter, req *http.Request) {
 	// fmt.Println("cmd.Wait() returned")
 }
 
+// Unravel the Mysteries by Spark
+
 func handleMysteries(w http.ResponseWriter, req *http.Request) {
 	writeFile(w, "mysteries.html")
 }
@@ -306,7 +316,8 @@ func handleMysteriesResultWS(w http.ResponseWriter, req *http.Request) {
 	var cmd *exec.Cmd
 	switch mode {
 	case "0", "1":
-		cmd = exec.Command("spark-submit", "--master", "yarn", "--py-files", "../app/dependencies.zip", "../app/m4.py", mode, "hdfs://gpu1:8020/books", mysteryText, partitionCount, "1", "0")
+		cmd = exec.Command("spark-submit", "--master", "yarn", "--num-executors", "16", "--executor-cores", "2", "--driver-memory", "512m", "--py-files", "../app/dependencies.zip", "../app/m4.py", mode, "har:///har/booksarchive.har", mysteryText, partitionCount, "1", "0")
+		//cmd = exec.Command("spark-submit", "--master", "yarn", "--num-executors", "16", "--executor-cores", "2", "--driver-memory", "512m", "--py-files", "../app/dependencies.zip", "../app/m4.py", mode, "hdfs://gpu1:8020/books", mysteryText, partitionCount, "1", "0")
 	case "2":
 		cmd = exec.Command("spark-submit", "--master", "yarn", "--py-files", "../app/dependencies.zip", "../app/m4.py", mode, mysteryText)
 	}
@@ -379,5 +390,8 @@ func handleMysteriesResultWS(w http.ResponseWriter, req *http.Request) {
 	// fmt.Println("cmd.Wait() returned")
 }
 
+// Unravel the Mysteries by Spark (Streaming Version)
+
 func handleMysteriesStream(w http.ResponseWriter, req *http.Request) {
+	writeFile(w, "mysteries_stream.html")
 }
