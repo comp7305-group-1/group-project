@@ -84,7 +84,7 @@ Run below command in your console. Use apt-get to install zip if you don't have 
 ```sh
 pip install -t dependencies -r requirements.txt
 cd dependencies
-zip -r ../dependencies.zip 
+zip -r ../dependencies.zip .
 ```
 
 ### Golang
