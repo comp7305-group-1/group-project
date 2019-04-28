@@ -8,6 +8,7 @@ import (
 	"log"
 	"math/rand"
 	"net/http"
+	"net/url"
 	"os"
 	"os/exec"
 	"strconv"
@@ -220,25 +221,69 @@ func handleMysteriesResult(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
+	// Mystery Text
 	mysteryText := req.FormValue("mt")
 
+	// Mode
 	mode := req.FormValue("mode")
 	var isUsedCachedResult string
 	switch mode {
+	case "0":
+		isUsedCachedResult = "No (do not save the result to cache)"
 	case "1":
-		isUsedCachedResult = "No"
-		break
+		isUsedCachedResult = "No (save the result to cache)"
 	case "2":
-		isUsedCachedResult = "Yes"
-		break
+		isUsedCachedResult = "Yes (load the result from cache)"
 	default:
 		writeErrorString(w, "invalid mode")
 		return
 	}
 
-	partitionCount := req.FormValue("pc")
-	if _, err := strconv.Atoi(partitionCount); err != nil {
+	// Executor Count
+	numExecutors := req.FormValue("ne")
+	if _, err := strconv.Atoi(numExecutors); err != nil {
 		writeError(w, err)
+		return
+	}
+
+	// Executor Cores
+	executorCores := req.FormValue("ec")
+	if _, err := strconv.Atoi(executorCores); err != nil {
+		writeError(w, err)
+		return
+	}
+
+	// Driver Memory
+	driverMemory := req.FormValue("dm")
+	dmIndex := len(driverMemory) - 1
+	driverMemoryNum := driverMemory[:dmIndex]
+	driverMemoryUnit := driverMemory[dmIndex:]
+	if _, err := strconv.Atoi(driverMemoryNum); err != nil {
+		writeError(w, err)
+		return
+	}
+	if driverMemoryUnit != "m" && driverMemoryUnit != "g" {
+		writeErrorString(w, "the unit of dm must be 'm' or 'g'")
+		return
+	}
+
+	// Partition Count
+	minPartitions := req.FormValue("mp")
+	if _, err := strconv.Atoi(minPartitions); err != nil {
+		writeError(w, err)
+		return
+	}
+
+	// Books Path
+	booksPath := req.FormValue("bp")
+	var booksPathURI string
+	switch booksPath {
+	case "0":
+		booksPathURI = "har:///har/booksarchive.har"
+	case "1":
+		booksPathURI = "hdfs://gpu1:8020/books"
+	default:
+		writeErrorString(w, "invalid bp")
 		return
 	}
 
@@ -248,8 +293,31 @@ func handleMysteriesResult(w http.ResponseWriter, req *http.Request) {
 		"MysteryText":        mysteryText,
 		"Mode":               mode,
 		"IsUsedCachedResult": isUsedCachedResult,
-		"PartitionCount":     partitionCount,
+		"NumExecutors":       numExecutors,
+		"ExecutorCores":      executorCores,
+		"DriverMemory":       driverMemory,
+		"MinPartitions":      minPartitions,
+		"BooksPath":          booksPath,
+		"BooksPathURI":       booksPathURI,
 	})
+}
+
+func getParam(w http.ResponseWriter, query url.Values, key string) (string, bool) {
+	valueSlice, ok := query[key]
+	if !ok {
+		writeErrorString(w, fmt.Sprintf("%s is not a key of query", key))
+		return "", false
+	}
+	if len(valueSlice) == 0 {
+		writeErrorString(w, fmt.Sprintf("len(valueSlice) == 0, key = %s", key))
+		return "", false
+	}
+	value := valueSlice[0]
+	if len(value) == 0 {
+		writeErrorString(w, fmt.Sprintf("len(value) == 0, key = %s", key))
+		return "", false
+	}
+	return value, true
 }
 
 func handleMysteriesResultWS(w http.ResponseWriter, req *http.Request) {
@@ -265,50 +333,81 @@ func handleMysteriesResultWS(w http.ResponseWriter, req *http.Request) {
 	}
 
 	// Mystery Text
-	mysteryTextSlice, ok := query["mt"]
+	mysteryText, ok := getParam(w, query, "mt")
 	if !ok {
-		writeErrorString(w, "mt is not a key of query")
-		return
-	}
-	if len(mysteryTextSlice) == 0 {
-		writeErrorString(w, "len(mysteryTextSlice) == 0")
-		return
-	}
-	mysteryText := mysteryTextSlice[0]
-	if len(mysteryText) == 0 {
-		writeErrorString(w, "len(mysteryText) == 0")
 		return
 	}
 
 	// Mode
-	modeSlice, ok := query["mode"]
+	mode, ok := getParam(w, query, "mode")
 	if !ok {
-		writeErrorString(w, "mode is not a key of query")
 		return
 	}
-	if len(modeSlice) == 0 {
-		writeErrorString(w, "len(modeSlice) == 0")
-		return
-	}
-	mode := modeSlice[0]
 	if mode != "0" && mode != "1" && mode != "2" {
 		writeErrorString(w, "invalid mode")
 		return
 	}
 
-	// Partition Count
-	partitionCountSlice, ok := query["pc"]
+	// Executor Count
+	numExecutors, ok := getParam(w, query, "ne")
 	if !ok {
-		writeErrorString(w, "pc is not a key of query")
 		return
 	}
-	if len(partitionCountSlice) == 0 {
-		writeErrorString(w, "len(partitionCountSlice) == 0")
-		return
-	}
-	partitionCount := partitionCountSlice[0]
-	if _, err := strconv.Atoi(partitionCount); err != nil {
+	if _, err := strconv.Atoi(numExecutors); err != nil {
 		writeError(w, err)
+		return
+	}
+
+	// Executor Cores
+	executorCores, ok := getParam(w, query, "ec")
+	if !ok {
+		return
+	}
+	if _, err := strconv.Atoi(executorCores); err != nil {
+		writeError(w, err)
+		return
+	}
+
+	// Driver Memory
+	driverMemory, ok := getParam(w, query, "dm")
+	if !ok {
+		return
+	}
+	dmIndex := len(driverMemory) - 1
+	driverMemoryNum := driverMemory[:dmIndex]
+	driverMemoryUnit := driverMemory[dmIndex:]
+	if _, err := strconv.Atoi(driverMemoryNum); err != nil {
+		writeError(w, err)
+		return
+	}
+	if driverMemoryUnit != "m" && driverMemoryUnit != "g" {
+		writeErrorString(w, "the unit of dm must be 'm' or 'g'")
+		return
+	}
+
+	// Partition Count
+	minPartitions, ok := getParam(w, query, "mp")
+	if !ok {
+		return
+	}
+	if _, err := strconv.Atoi(minPartitions); err != nil {
+		writeError(w, err)
+		return
+	}
+
+	// Books Path
+	booksPath, ok := getParam(w, query, "bp")
+	if !ok {
+		return
+	}
+	var booksPathURI string
+	switch booksPath {
+	case "0":
+		booksPathURI = "har:///har/booksarchive.har"
+	case "1":
+		booksPathURI = "hdfs://gpu1:8020/books"
+	default:
+		writeErrorString(w, "invalid bp")
 		return
 	}
 
@@ -316,8 +415,7 @@ func handleMysteriesResultWS(w http.ResponseWriter, req *http.Request) {
 	var cmd *exec.Cmd
 	switch mode {
 	case "0", "1":
-		cmd = exec.Command("spark-submit", "--master", "yarn", "--num-executors", "16", "--executor-cores", "2", "--driver-memory", "512m", "--py-files", "../app/dependencies.zip", "../app/m4.py", mode, "har:///har/booksarchive.har", mysteryText, partitionCount, "1", "0")
-		//cmd = exec.Command("spark-submit", "--master", "yarn", "--num-executors", "16", "--executor-cores", "2", "--driver-memory", "512m", "--py-files", "../app/dependencies.zip", "../app/m4.py", mode, "hdfs://gpu1:8020/books", mysteryText, partitionCount, "1", "0")
+		cmd = exec.Command("spark-submit", "--master", "yarn", "--num-executors", numExecutors, "--executor-cores", executorCores, "--driver-memory", driverMemory, "--py-files", "../app/dependencies.zip", "../app/m4.py", mode, booksPathURI, mysteryText, minPartitions, "1", "0")
 	case "2":
 		cmd = exec.Command("spark-submit", "--master", "yarn", "--py-files", "../app/dependencies.zip", "../app/m4.py", mode, mysteryText)
 	}

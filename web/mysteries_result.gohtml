@@ -5,7 +5,7 @@
   <title>COMP7305 Group 01 - Unravel the Mysteries by Spark Result</title>
   <script type="text/javascript" language="javascript">
 function ready() {
-  var wsUri = 'ws://' + location.host + '/MysteriesResultWS?mt={{.MysteryText}}&mode={{.Mode}}&pc={{.PartitionCount}}';
+  var wsUri = 'ws://' + location.host + '/MysteriesResultWS?mt={{.MysteryText}}&mode={{.Mode}}&ne={{.NumExecutors}}&ec={{.ExecutorCores}}&dm={{.DriverMemory}}&mp={{.MinPartitions}}&bp={{.BooksPath}}';
   var stdout;
   var stderr;
   var socket;
@@ -79,8 +79,24 @@ document.addEventListener("DOMContentLoaded", ready);
       <td>{{.IsUsedCachedResult}}</td>
     </tr>
     <tr>
-      <th align="left">Partition Count:</th>
-      <td>{{.PartitionCount}}</td>
+      <th align="left">Executor Count (<tt>--num-executors</tt>):</th>
+      <td>{{.NumExecutors}}</td>
+    </tr>
+    <tr>
+      <th align="left">Executor Cores (<tt>--executor-cores</tt>):</th>
+      <td>{{.ExecutorCores}}</td>
+    </tr>
+    <tr>
+      <th align="left">Driver Memory (<tt>--driver-memory</tt>):</th>
+      <td>{{.DriverMemory}}</td>
+    </tr>
+    <tr>
+      <th align="left">Partition Count (<tt>minPartitions</tt>):</th>
+      <td>{{.MinPartitions}}</td>
+    </tr>
+    <tr>
+      <th align="left">Books Path:</th>
+      <td><tt>{{.BooksPathURI}}</tt></td>
     </tr>
     <tr>
       <th align="left">Status:</th>
@@ -97,9 +113,11 @@ document.addEventListener("DOMContentLoaded", ready);
     <br>
     <label for="stderr">Standard Error:</label><br>
     <textarea id="stderr" name="stderr" cols="200" rows="25" readonly="readonly" style="font-family: monospace"></textarea><br>
+    <!--
     <br>
     <label for="result">Result:</label><br>
     <input type="text" id="result" name="result" size="80" readonly="readonly" style="font-family: monospace">
+    -->
   </form><br>
   <a href="/Mysteries">Go back to Unravel the Mysteries</a>
 </body>
