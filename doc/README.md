@@ -21,6 +21,9 @@
     - [Streaming Version of Main Program](#streaming-version-of-main-program)
     - [Web Interface](#web-interface)
 - [File Listings](#file-listings)
+  - [In the `cleaning` directory](#in-the-cleaning-directory)
+  - [In the `app` directory](#in-the-app-directory)
+  - [In the `web` directory](#in-the-web-directory)
 
 # Downloading, Installing, and Running Our Product
 
@@ -74,13 +77,15 @@ nltk.download('punkt')
 
 ### PySpark Dependencies
 
-To run the project with the required dependency, you need to create a file named `requirements.txt` in the same directory of the python program.
-Add below package into `requirements.txt` and save.
+To run the project with the required dependency, you need to create a file named `requirements.txt` in the same directory of the python program. Add below package into `requirements.txt` and save.
+
 ```sh
 nltk==3.4.1
 pyspark==2.4.0
 ```
-Run below command in your console. Use apt-get to install zip if you don't have it installed.
+
+Run below command in your console.
+
 ```sh
 pip install -t dependencies -r requirements.txt
 cd dependencies
@@ -143,10 +148,10 @@ Please run the data cleaning step once (see below) before running this step.
 To create the Hadoop Archive Format for grouping the small ebooks files, the following command should be used:
 
 ```sh
-$ hadoop archive -archiveName booksarchive.har -p /books /har
+hadoop archive -archiveName booksarchive.har -p /books /har
 ```
-where the source ebooks files are placed under `hdfs://books/` 
-and the archive created will be stored as `hdfs://har/booksarchive.har`
+
+where the source ebooks files are placed under `hdfs://books/` and the archive created will be stored as `hdfs://har/booksarchive.har`.
 
 
 
@@ -162,7 +167,6 @@ spark-submit --master yarn clean.py <hadoopMasterIP> <hadoopMasterName> <sparkMa
 ```
 
 ***TODO: Pauline, please add the descriptions of the parameters!***
-
 
 ### Main Program
 
@@ -248,3 +252,37 @@ kill 7729 7765
 
 
 # File Listings
+
+## In the `cleaning` directory
+
+Pauline is the author of this part.
+
+| File | Description |
+| --- | --- |
+| `clean.py` | The main program for data cleaning. |
+
+## In the `app` directory
+
+Kenji and Nelson are the authors of this part.
+
+| File | Description |
+| --- | --- |
+| `mystery.py` | The beta version of the main program. (by Nelson) |
+| `m.py` | The first version of the main program. (by Nelson) |
+| `m2.py` | The improved version of the main program. (by Kenji) |
+| `m3.py` | The more improved version of the main program. (by Kenji) |
+| `m4.py` | The fully parallelized version of the main program. (by Kenji) |
+| `stream.py` | The beta version of the streaming version of main program. This runs on a local Spark setting. (by Nelson) |
+| `stream2.py` | The fully parallelized version of the streaming version of main program. This is intended to be run on a Spark cluster setting. (by Kenji) |
+
+## In the `web` directory
+
+Kenji is the author of this part.
+
+| File | Description |
+| --- | --- |
+| `main.go` | This is the main program for the web interface. |
+| `index.html` | The index page. |
+| `mysteries.html` | The input page of the main program. |
+| `mysteries_result.gohtml` | The Go Template for the result page of the main program. |
+| `mysteries_stream.html` | The input / result page of the streaming version of the main program. |
