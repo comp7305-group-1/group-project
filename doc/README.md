@@ -129,7 +129,12 @@ sudo umount mountpoint
 
 Please run the data cleaning step once (see below) before running this step.
 
-***TODO: Ewen, please add this!***
+To create the Hadoop Archive Format for grouping the small ebooks files, the following command should be used:
+
+$ hadoop archive -archiveName booksarchive.har -p /books /har
+
+where the source ebooks files are placed under hdfs://books/ 
+and the archive created will be stored as hdfs://har/booksarchive.har
 
 
 
@@ -146,11 +151,6 @@ spark-submit --master yarn clean.py <hadoopMasterIP> <hadoopMasterName> <sparkMa
 
 ***TODO: Pauline, please add the descriptions of the parameters!***
 
-To create the Hadoop Archive Format for grouping the small ebooks files, the following command was used:
-
-$ hadoop archive -archiveName booksarchive.har -p /books /har
-
-where the source files to be put in the archive should be placed under hdfs://books/ and the archive to be stored under hdfs://har/booksarchive.har
 
 ### Main Program
 
