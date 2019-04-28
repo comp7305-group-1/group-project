@@ -56,7 +56,7 @@ ter=yarn --py-files ../application/dependencies.zip s.py tpgeo
 if __name__ == '__main__':
     books_path = sys.argv[1]
     mystery_text = str(sys.argv[2]).lower()
-    batch_duration = int(sys,argv[3])
+    batch_duration = int(sys.argv[3])
     preserves_partitioning = True
     if int(sys.argv[4]) == 0:
         preserves_partitioning = False
