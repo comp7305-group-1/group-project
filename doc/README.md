@@ -74,7 +74,19 @@ nltk.download('punkt')
 
 ### PySpark Dependencies
 
-***TODO: Nelson, please add this!***
+```
+To run the project with the required dependency, you need to create a file named `requirements.txt` in the same directory of the python program.
+Add below package into `requirements.txt` and save.
+```sh
+nltk==3.4.1
+pyspark==2.4.0
+```
+Run below command in your console. Use apt-get to install zip if you don't have it installed.
+```sh
+pip install -t dependencies -r requirements.txt
+cd dependencies
+zip -r ../dependencies.zip 
+```
 
 ### Golang
 
