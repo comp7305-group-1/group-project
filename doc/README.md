@@ -185,9 +185,9 @@ spark-submit --master yarn m4.py <mode> <books_path> <mystery_text> \
 | `mode` | `0`: Find the result without reading the cache. Do not save the result to the cache.<br>`1`: Find the result without reading the cache. Save the result to the cache.<br>`2`: Do not find the result. Load the result from the cache. |
 | `books_path` | The path to the books. You may fill in `har:///har/booksarchive.har` for the HAR version of the book archive, or `hdfs://gpu1:8020/books` for the normal HDFS version of the books. |
 | `mystery_text` | The mystery text (initialism) to be searched from the books. |
-| `min_partitions` | The `MinPartitions` parameter when calling `sc.wholeTextFiles()`. This has significant effect on the number of partitions created from the source text files. |
-| `preserves_partitioning` | The `preservesPartitioning` parameter when calling `books.flatMap()`. This has just little effect on the efficiency, perhaps because Spark already preserves partitioning in our case, without explicitly specified. |
-| `num_partitions` | The `numPartitions` parameter when calling `filtered_list_of_book_name_and_sentence.groupByKey()`. If this values is `0`, then the default is used (as if `None` is passed to the function). |
+| `min_partitions` | The `MinPartitions` parameter when calling `sc.wholeTextFiles()`. This has significant effect on the number of partitions created from the source text files. The recommended value is `128`. |
+| `preserves_partitioning` | The `preservesPartitioning` parameter when calling `books.flatMap()`: `0` represents `False` and `1` represents `True`. This has just little effect on the efficiency, perhaps because Spark already preserves partitioning in our case, without explicitly specified. The recommended value is `1`. |
+| `num_partitions` | The `numPartitions` parameter when calling `filtered_list_of_book_name_and_sentence.groupByKey()`. If this values is `0`, then the default is used (as if `None` is passed to the function). The recommended value is `0` to use the default. |
 
 
 ### Streaming Version of Main Program
